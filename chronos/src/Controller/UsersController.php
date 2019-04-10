@@ -98,14 +98,7 @@ class UsersController extends AppController
      */
     public function delete($id = null)
     {
-        $this->request->allowMethod(['post', 'delete']);
-        $user = $this->Users->get($id);
-        if ($this->Users->delete($user)) {
-            $this->Flash->success(__('The user has been deleted.'));
-        } else {
-            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
-        }
-
+        $this->Flash->error(__('This system does not support user deletion. Set user to inactive instead.'));
         return $this->redirect(['action' => 'index']);
     }
 
