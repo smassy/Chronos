@@ -61,7 +61,15 @@ class ManagersController extends AppController
             $this->Flash->error(__('The manager could not be saved. Please, try again.'));
         }
         $departments = $this->Managers->Departments->find('list', ['limit' => 200]);
-        $this->set(compact('manager', 'departments'));
+
+        // Test until user_details has information!!!
+        $first_name = $this->Users->user_details->find('list', ["keyField" => "id", "valueField" => "first_name"])->order(["id" => "ASC"])->toArray();
+
+        $last_name = $this->Users->user_details->find('list', ["keyField" => "id", "valueField" => "last_name"])->order(["id" => "ASC"])->toArray();
+
+        $full_name = $first_name + " " + $last_name;
+
+        $this->set(compact('manager', 'departments', 'full_name'));
     }
 
     /**

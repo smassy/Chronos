@@ -9,6 +9,7 @@
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('Edit Manager'), ['action' => 'edit', $manager->user_id]) ?> </li>
         <li><?= $this->Form->postLink(__('Delete Manager'), ['action' => 'delete', $manager->user_id], ['confirm' => __('Are you sure you want to delete # {0}?', $manager->user_id)]) ?> </li>
+        <li><?= $this->Html->link(__('List Users'), ['controller' => 'Users', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('List Managers'), ['action' => 'index']) ?> </li>
         <li><?= $this->Html->link(__('New Manager'), ['action' => 'add']) ?> </li>
         <li><?= $this->Html->link(__('List Departments'), ['controller' => 'Departments', 'action' => 'index']) ?> </li>
