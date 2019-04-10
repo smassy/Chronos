@@ -17,6 +17,15 @@ namespace App\Controller;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
 
+// Constants for controllers
+// Facilitate role handling.
+const INACTIVE = 0;
+const USER = 20;
+const SECRETARY = 40;
+const MANAGER = 120;
+const ADMIN = 220;
+const SUPERADMIN = 255;
+
 /**
  * Application Controller
  *
@@ -57,7 +66,9 @@ class AppController extends Controller
             'loginAction' => [
                 'controller' => 'Users',
                 'action' => 'login'
-            ]
+            ],
+            'authorize' => ['Controller'],
+            "unauthorizedRedirect" => ["controller" => "Users", "action" => "login"]
         ]);
 
         /*
@@ -65,5 +76,10 @@ class AppController extends Controller
          * see https://book.cakephp.org/3.0/en/controllers/components/security.html
          */
         //$this->loadComponent('Security');
+    }
+
+    // Intended to be overridden in individual controllers
+    public function isAuthorized($user) {
+        return true;
     }
 }

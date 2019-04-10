@@ -12,6 +12,15 @@ use App\Controller\AppController;
  */
 class UsersController extends AppController
 {
+
+    public function isAuthorized($user) {
+        // Only admins can access this controller
+        if ($user["role_id"] >= ADMIN) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Index method
      *
