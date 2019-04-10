@@ -17,8 +17,8 @@ class UsersFixture extends TestFixture
     public $fields = [
         'id' => ['type' => 'integer', 'length' => 10, 'unsigned' => true, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
         'username' => ['type' => 'string', 'length' => 25, 'null' => false, 'default' => null, 'collate' => 'latin1_swedish_ci', 'comment' => '', 'precision' => null, 'fixed' => null],
+        'password' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'collate' => 'latin1_swedish_ci', 'comment' => '', 'precision' => null, 'fixed' => null],
         'role_id' => ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
-        'password' => ['type' => 'string', 'length' => 50, 'null' => true, 'default' => null, 'collate' => 'latin1_swedish_ci', 'comment' => '', 'precision' => null, 'fixed' => null],
         '_indexes' => [
             'users_role_id_fk' => ['type' => 'index', 'columns' => ['role_id'], 'length' => []],
         ],
@@ -44,8 +44,8 @@ class UsersFixture extends TestFixture
             [
                 'id' => 1,
                 'username' => 'Lorem ipsum dolor sit a',
-                'role_id' => 1,
-                'password' => 'Lorem ipsum dolor sit amet'
+                'password' => 'Lorem ipsum dolor sit amet',
+                'role_id' => 1
             ],
         ];
         parent::init();

@@ -33,7 +33,7 @@ CREATE TABLE roles (
 CREATE TABLE users (
     id INT UNSIGNED AUTO_INCREMENT,
     username VARCHAR(25) UNIQUE NOT NULL,
-    password VARCHAR(255),
+    password VARCHAR(255) NOT NULL,
     role_id TINYINT UNSIGNED NOT NULL,
     PRIMARY KEY users_pk (id),
     FOREIGN KEY users_role_id_fk (role_id) REFERENCES roles(id)

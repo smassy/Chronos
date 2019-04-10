@@ -2,15 +2,14 @@
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
-use Cake\Auth\DefaultPasswordHasher;
 
 /**
  * User Entity
  *
  * @property int $id
  * @property string $username
+ * @property string $password
  * @property int $role_id
- * @property string|null $password
  *
  * @property \App\Model\Entity\Role $role
  * @property \App\Model\Entity\Appointment[] $appointments
@@ -36,8 +35,8 @@ class User extends Entity
      */
     protected $_accessible = [
         'username' => true,
-        'role_id' => true,
         'password' => true,
+        'role_id' => true,
         'role' => true,
         'appointments' => true,
         'int_appointments' => true,
