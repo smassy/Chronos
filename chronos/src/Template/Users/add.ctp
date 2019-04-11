@@ -19,11 +19,14 @@
     <fieldset>
         <legend><?= __('Add User') ?></legend>
         <?php
-            echo $this->Form->control('username');
+            echo $this->Form->control('username', ['minlength' => 3]);
             echo $this->Form->select('role_id', $roles);
-            echo $this->Form->control('password');
+            echo $this->Form->control('password', ['minlength' => 8]);
+        //    echo '<label for="pwConfirm">Confirm password</label>';
+            echo $this->Form->input("confirmPassword", ['type' => 'password', 'id' => 'pwConfirm']);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
+<?= $this->Html->script("passwords") ?>
