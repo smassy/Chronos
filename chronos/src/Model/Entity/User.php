@@ -56,6 +56,18 @@ class User extends Entity
     }
 
     /**
+     * Check supplied string against current user password.
+     *
+     * Returns true if it matches, false otherwise.
+     */
+    public function checkPassword($candidatePass) {
+        if (!$this->hasValue("password") || $this->isEmpty('password')) {
+            return false;
+    }
+        return (new DefaultPasswordHasher)->check($candidatePass, $this->password);
+    }
+
+    /**
      * Fields that are excluded from JSON versions of the entity.
      *
      * @var array

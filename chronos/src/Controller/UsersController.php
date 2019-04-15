@@ -14,7 +14,11 @@ class UsersController extends AppController
 {
 
     public function isAuthorized($user) {
-        // Only admins can access this controller
+        // Special cases
+        if (in_array($this->request->param('action'), ['changepassword', 'logout'])) {
+            return true;
+        }
+        // Only admins can access this controller save for above actions.
         if ($user["role_id"] >= ADMIN) {
             return true;
         }
@@ -131,5 +135,27 @@ class UsersController extends AppController
     // Log Out
     public function logout() {
         return $this->redirect($this->Auth->logout());
+    }
+
+    /*
+     * Controller action to handle password change for a user (self-serve).
+     * Gets its info from the logged in user.
+     */
+    public function changepassword() {
+        $user = $this->Users->get($this->Auth->User('id'));
+        if ($this->request->is(['post', 'put'])) {
+            if ($user->checkPassword($this->request->getData('oldPassword'))) {
+                $user->password = $this->request->getData('newPassword');
+                if ($this->Users->save($user)) {
+                    $this->Flash->success("Password updated successfully.");
+                    return $this->redirect(HOME);
+                } else {
+                    $this->Flash->error("Failed to update password.");
+                }
+            } else {
+                $this->Flash->error("The password supplied does not match your current password.");
+            }
+        }
+        $this->set(compact('user'));
     }
 }
