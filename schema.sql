@@ -42,10 +42,11 @@ CREATE TABLE users (
 -- tokens table
 -- Used to store temporary unique tokens (mainly for password reset facility)
 CREATE TABLE tokens (
-    user_id INT UNSIGNED,
+    id INT UNSIGNED AUTO_INCREMENT,
+    user_id INT UNSIGNED UNIQUE NOT NULL,
     token VARCHAR(255) NOT NULL,
     expiry DATETIME NOT NULL,
-    PRIMARY KEY tokens_pk (user_id),
+    PRIMARY KEY tokens_pk (id),
     FOREIGN KEY tokens_id_fk (user_id) REFERENCES users(id)
 );
 
@@ -59,7 +60,8 @@ CREATE TABLE departments (
 -- user_details table
 -- Stores user information
 CREATE TABLE user_details (
-    user_id INT UNSIGNED,
+    id INT UNSIGNED AUTO_InCREMENT,
+    user_id INT UNSIGNED NOT NULL UNIQUE,
     department_id TINYINT UNSIGNED NOT NULL,
     email VARCHAR(60) NOT NULL,
     last_name VARCHAR(60) NOT NULL,
@@ -68,27 +70,29 @@ CREATE TABLE user_details (
     title VARCHAR(100) NOT NULL,
     office VARCHAR(10),
     extension SMALLINT UNSIGNED,
-    PRIMARY KEY user_details_pk (user_id),
+    PRIMARY KEY user_details_pk (id),
+    FOREIGN KEY user_details_user_id_fk (user_id) REFERENCES users(id),
     FOREIGN KEY user_details_department_id_fk (department_id) REFERENCES departments(id)
 );
 
 -- managers table
 -- Stores a list of managers and their departments
 -- A user can only manager one department but a department can have several managers (comanaging, assistant managers, etc)
-CREATE TABLE managers (
-    user_id INT UNSIGNED,
-    department_id TINYINT UNSIGNED NOT NULL,
-    PRIMARY KEY managers_pk (user_id),
-    FOREIGN KEY managers_user_id_fk (user_id) REFERENCES users(id),
-    FOREIGN KEY managers_department_id_fk (department_id) REFERENCES departments(id)
-);
+--CREATE TABLE managers (
+--    user_id INT UNSIGNED,
+--    department_id TINYINT UNSIGNED NOT NULL,
+--    PRIMARY KEY managers_pk (user_id),
+--    FOREIGN KEY managers_user_id_fk (user_id) REFERENCES users(id),
+--    FOREIGN KEY managers_department_id_fk (department_id) REFERENCES departments(id)
+--);
 
 -- secretarial_relationships table
 -- Defines the relationships between a secretary and a group of users.
 CREATE TABLE secretarial_relationships (
-    secretary_id INT UNSIGNED,
-    user_id INT UNSIGNED,
-    PRIMARY KEY secretarial_relationships_pk (secretary_id,user_id),
+    id INT UNSIGNED AUTO_INCREMENT,
+    secretary_id INT UNSIGNED NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    PRIMARY KEY secretarial_relationships_pk (id),
     FOREIGN KEY sec_rel_secretary_id_fk (secretary_id) REFERENCES users(id),
     FOREIGN KEY sec_rel_user_id_fk (user_id) REFERENCES users(id)
 );
@@ -109,20 +113,22 @@ CREATE TABLE appointments (
 -- ext_appointment table
 -- Stores party info when person is external to the organisation.
 CREATE TABLE ext_appointments (
-    appointment_id INT UNSIGNED,
+    id INT UNSIGNED AUTO_INCREMENT,
+    appointment_id INT UNSIGNED NOT NULL UNIQUE,
     party VARCHAR(127) NOT NULL,
     info TINYTEXT,
-    PRIMARY KEY ext_appointments_pk (appointment_id),
+    PRIMARY KEY ext_appointments_pk (id),
     FOREIGN KEY ext_appointments_appointment_id_fk (appointment_id) REFERENCES appointments(id)
 );
 
 -- int_appointments table
 -- Stores party info when person is internal to the organisation.
 CREATE TABLE int_appointments (
-    appointment_id INT UNSIGNED,
+    id INT UNSIGNED AUTO_INCREMENT,
+    appointment_id INT UNSIGNED NOT NULL UNIQUE,
     user_id INT UNSIGNED NOT NULL,
     confirmed BOOL NOT NULL DEFAULT FALSE,
-    PRIMARY KEY int_appointments_pk (appointment_id),
+    PRIMARY KEY int_appointments_pk (id),
     FOREIGN KEY int_appointments_appointment_id_fk (appointment_id) REFERENCES appointments(id),
     FOREIGN KEY int_appointment_user_id_fk (user_id) REFERENCES users(id)
 );
@@ -153,13 +159,15 @@ CREATE TABLE message_attachments (
 -- message_instances table
 -- Stores instance of a message (routing information and whether it was seen)
 CREATE TABLE message_instances (
+    id INT UNSIGNED AUTO_INCREMENT,
     message_id INT UNSIGNED,
     user_id INT UNSIGNED,
     seen DATETIME,
     archived BOOL NOT NULL DEFAULT FALSE,
-    PRIMARY KEY message_instances_pk (message_id,user_id),
+    PRIMARY KEY message_instances_pk (id),
     FOREIGN KEY message_instances_message_id_fk (message_id) REFERENCES messages(id),
-    FOREIGN KEY message_instances_user_id_fk (user_id) REFERENCES users(id)
+    FOREIGN KEY message_instances_user_id_fk (user_id) REFERENCES users(id),
+    UNIQUE mesg_inst_uq (message_id,user_id)
 );
 
 -- notes table
@@ -185,9 +193,13 @@ CREATE TABLE tags (
 -- note_tags table
 -- Stores note/tag relationships
 CREATE TABLE note_tags (
+    id INT UNSIGNED AUTO_INCREMENT,
     tag_id INT UNSIGNED,
     note_id INT UNSIGNED,
-    PRIMARY KEY note_tags_pk (tag_id,note_id)
+    PRIMARY KEY note_tags_pk (id),
+    FOREIGN KEY note_tags_note_id_fk (note_id) REFERENCES notes(id),
+    FOREIGN KEY note_tags_tag_id_fk (tag_id) REFERENCES tags(id),
+    UNIQUE note_tags_uq (note_id,tag_id)
 );
 
 -- Populate the roles table as these are more or less hard coded.
