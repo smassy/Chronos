@@ -21,9 +21,11 @@
         <?php
             echo $this->Form->control('username');
             echo $this->Form->select('role_id', $roles);
-            echo $this->Form->control('password');
+            echo $this->Form->input('newPassword', ['id' => 'password', 'minlength' => 8]);
+            echo $this->Form->input("confirmPassword", ['type' => 'password', 'id' => 'pwConfirm']);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
+<?= $this->Html->script("passwords") ?>
