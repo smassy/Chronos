@@ -23,7 +23,7 @@
             echo $this->Form->select('role_id', $roles);
             echo $this->Form->control('password', ['minlength' => 8]);
         //    echo '<label for="pwConfirm">Confirm password</label>';
-            echo $this->Form->input("confirmPassword", ['type' => 'password', 'id' => 'pwConfirm']);
+            echo $this->Form->input("confirmPassword", ['type' => 'password', 'id' => 'pwConfirm', 'required' => true]);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
