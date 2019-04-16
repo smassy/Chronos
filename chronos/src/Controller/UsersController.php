@@ -50,7 +50,7 @@ class UsersController extends AppController
     public function view($id = null)
     {
         $user = $this->Users->get($id, [
-            'contain' => ['Roles', 'Appointments', 'IntAppointments', 'Managers', 'MessageInstances', 'Messages', 'Notes', 'SecretarialRelationships', 'Tokens', 'UserDetails']
+            'contain' => ['Roles', 'Appointments', 'IntAppointments', 'MessageInstances', 'Messages', 'Notes', 'SecretarialRelationships', 'Tokens', 'UserDetails']
         ]);
 
         $this->set('user', $user);
@@ -93,7 +93,7 @@ class UsersController extends AppController
 
             $this->Flash->error($errorMsg, ['escape' => false]);
         }
-        $roles = $this->Users->Roles->find('list', ["keyField" => "id", "valueField" => "role"])->order(["id" => "ASC"])->toArray();
+        $roles = $this->Users->Roles->find('list', ["keyField" => "id", "valueField" => "role"])->order(["id" => "ASC"])->where(['id <=' => $this->Auth->User('role_id')])->toArray();
         $this->loadModel('Departments');
         $departments = $this->Departments->find('list', ['keyField' => 'id', 'valueField' => 'name'])->toArray();
         $this->set(compact('user', 'roles', 'departments'));
@@ -109,7 +109,7 @@ class UsersController extends AppController
     public function edit($id = null)
     {
         $user = $this->Users->get($id, [
-            'contain' => []
+            'contain' => ['UserDetails']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
@@ -121,10 +121,30 @@ class UsersController extends AppController
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $errorMsg = "User could not be saved.";
+            if ($user->errors()) {
+                $errorList = [];
+                foreach ($user->errors() as $errors) {
+                    if (is_array($errors)) {
+                        foreach ($errors as $error) {
+                            $errorList[] = is_array($error) ? implode('', $error) : $error;
+                        }
+                    } else {
+                        $errorList[] = $errors;
+                    }
+                }
+
+                if (!empty($errorList)) {
+                    $errorMsg .= ":<br />".implode("<br />", $errorList);
+                }
+            }
+
+            $this->Flash->error($errorMsg, ['escape' => false]);
         }
-        $roles = $this->Users->Roles->find('list', ["keyField" => "id", "valueField" => "role"])->order(["id" => "ASC"])->toArray();
-        $this->set(compact('user', 'roles'));
+        $roles = $this->Users->Roles->find('list', ["keyField" => "id", "valueField" => "role"])->order(["id" => "ASC"])->where(['id <=' => $this->Auth->User('role_id')])->toArray();
+        $this->loadModel('Departments');
+        $departments = $this->Departments->find('list', ['keyField' => 'id', 'valueField' => 'name'])->toArray();
+        $this->set(compact('user', 'roles', 'departments'));
     }
 
     /**

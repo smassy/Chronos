@@ -20,9 +20,17 @@
         <legend><?= __('Edit User') ?></legend>
         <?php
             echo $this->Form->control('username');
-            echo $this->Form->select('role_id', $roles);
-            echo $this->Form->input('newPassword', ['id' => 'password', 'minlength' => 8]);
-            echo $this->Form->input("confirmPassword", ['type' => 'password', 'id' => 'pwConfirm']);
+            echo $this->Form->control('role_id', ['options' => $roles]);
+            echo $this->Form->control('user_detail.department_id', ['options' => $departments]);
+            echo $this->Form->control('newPassword', ['type' => 'password', 'id' => 'password', 'minlength' => 8]);
+            echo $this->Form->control('confirmPassword', ['type' => 'password', 'id' => 'pwConfirm']);
+            echo $this->Form->control('user_detail.first_name');
+            echo $this->Form->control('user_detail.middle_name');
+            echo $this->Form->control('user_detail.last_name');
+            echo $this->Form->control('user_detail.title');
+            echo $this->Form->control('user_detail.email');
+            echo $this->Form->control('user_detail.office');
+            echo $this->Form->control('user_detail.extension'); 
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
