@@ -64,6 +64,8 @@ class UsersController extends AppController
     public function add()
     {
         $user = $this->Users->newEntity();
+        $userDetails = $this->Users->UserDetails->newEntity();
+        $user['user_detail'] = $userDetails;
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
@@ -71,10 +73,30 @@ class UsersController extends AppController
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $errorMsg = "User could not be saved.";
+            if ($user->errors()) {
+                $errorList = [];
+                foreach ($user->errors() as $errors) {
+                    if (is_array($errors)) {
+                        foreach ($errors as $error) {
+                            $errorList[] = is_array($error) ? implode('', $error) : $error;
+                        }
+                    } else {
+                        $errorList[] = $errors;
+                    }
+                }
+
+                if (!empty($errorList)) {
+                    $errorMsg .= ":<br />".implode("<br />", $errorList);
+                }
+            }
+
+            $this->Flash->error($errorMsg, ['escape' => false]);
         }
         $roles = $this->Users->Roles->find('list', ["keyField" => "id", "valueField" => "role"])->order(["id" => "ASC"])->toArray();
-        $this->set(compact('user', 'roles'));
+        $this->loadModel('Departments');
+        $departments = $this->Departments->find('list', ['keyField' => 'id', 'valueField' => 'name'])->toArray();
+        $this->set(compact('user', 'roles', 'departments'));
     }
 
     /**

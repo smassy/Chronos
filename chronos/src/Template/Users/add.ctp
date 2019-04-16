@@ -20,10 +20,17 @@
         <legend><?= __('Add User') ?></legend>
         <?php
             echo $this->Form->control('username', ['minlength' => 3]);
-            echo $this->Form->select('role_id', $roles);
-            echo $this->Form->control('password', ['minlength' => 8]);
-        //    echo '<label for="pwConfirm">Confirm password</label>';
-            echo $this->Form->input("confirmPassword", ['type' => 'password', 'id' => 'pwConfirm', 'required' => true]);
+            echo $this->Form->control('role_id', ['options' => $roles]);
+            echo $this->Form->control('user_detail.department_id', ['options' => $departments]);
+            echo $this->Form->control('password', ['required' => true, 'minlength' => 8]);
+            echo $this->Form->control("confirmPassword", ['type' => 'password', 'id' => 'pwConfirm', 'required' => true]);
+            echo $this->Form->control('user_detail.first_name', ['required' => true, 'minlength' => 2, 'maxlength' => 60]);
+            echo $this->Form->control('user_detail.middle_name', ['maxlength' => 60]);
+            echo $this->Form->control('user_detail.last_name', ['required' => true, 'minlength' => 2, 'maxlength' => 60]);
+            echo $this->Form->control('user_detail.title', ['required' => true, 'minlength' => 3, 'maxlength' => 100]);
+            echo $this->Form->control('user_detail.email', ['type' => 'email', 'required' => true, 'maxlength' => 60]);
+            echo $this->Form->control('user_detail.office', ['type' => 'text', 'maxlength' => 10,]);
+            echo $this->Form->control('user_detail.extension', ['min' => 0, 'max' => 65535]);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>

@@ -73,7 +73,7 @@ class UsersTable extends Table
         $this->hasMany('Tokens', [
             'foreignKey' => 'user_id'
         ]);
-        $this->hasMany('UserDetails', [
+        $this->hasOne('UserDetails', [
             'foreignKey' => 'user_id'
         ]);
     }
@@ -95,7 +95,7 @@ class UsersTable extends Table
             ->maxLength('username', 25)
             ->requirePresence('username', 'create')
             ->allowEmptyString('username', false)
-            ->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Username already exists.']);
 
         $validator
             ->scalar('password')
