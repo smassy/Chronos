@@ -8,8 +8,6 @@
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('New User'), ['action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Managers'), ['controller' => 'Managers', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Manager'), ['controller' => 'Managers', 'action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List Secretarial Relationships'), ['controller' => 'SecretarialRelationships', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Secretarial Relationship'), ['controller' => 'SecretarialRelationships', 'action' => 'add']) ?></li>
     </ul>
