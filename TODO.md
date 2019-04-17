@@ -5,10 +5,10 @@ __Final deadline April 30__
 ## This week (preferably before week-end) (April 19)
 
 - Implement password reset
-- Implement work flow for creating user Details (redirect admin to create user detail when done creating user).
-- Implement user detail creation/management.
+- (DONE) Implement work flow for creating user Details (redirect admin to create user detail when done creating user).
+- (DONE) Implement user detail creation/management.
 - Fully functional assignment of managers to departments.
-- Add authorisation functions to Departments, Managers and User Details.
+- (DONE) Add authorisation functions to Departments, Managers and User Details.
 - Implement user search.
 
 ## By end of week-end (April 22):
