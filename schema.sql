@@ -78,13 +78,13 @@ CREATE TABLE user_details (
 -- managers table
 -- Stores a list of managers and their departments
 -- A user can only manager one department but a department can have several managers (comanaging, assistant managers, etc)
---CREATE TABLE managers (
+-- CREATE TABLE managers (
 --    user_id INT UNSIGNED,
 --    department_id TINYINT UNSIGNED NOT NULL,
 --    PRIMARY KEY managers_pk (user_id),
 --    FOREIGN KEY managers_user_id_fk (user_id) REFERENCES users(id),
 --    FOREIGN KEY managers_department_id_fk (department_id) REFERENCES departments(id)
---);
+-- );
 
 -- secretarial_relationships table
 -- Defines the relationships between a secretary and a group of users.
