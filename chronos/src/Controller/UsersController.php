@@ -67,6 +67,11 @@ class UsersController extends AppController
         $user['user_detail'] = $userDetails;
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
+            if ($user->role_id > $this->Auth->user('role_id')) {
+                $this->Flash->error('Privilege escalation attempt detected. This will be logged.');
+                $this->log('Privilege escalation attempt detected. Offender: ' . $this->Auth->user('username'), 'warning');
+                return $this->redirect(['controller' => 'Users', 'action' => 'index']);
+            }
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('The user has been saved.'));
 
@@ -110,8 +115,17 @@ class UsersController extends AppController
         $user = $this->Users->get($id, [
             'contain' => ['UserDetails']
         ]);
+        if ($this->Auth->user('role_id') < $user->role_id) {
+            $this->Flash->error('You may not edit a user with higher privilege than yours.');
+            return $this->redirect(['controller' => 'Users', 'action' => 'index']);
+        }
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
+            if ($user->role_id > $this->Auth->user('role_id')) {
+                $this->Flash->error('Privilege escalation attempt detected. This will be logged.');
+                $this->log('Privilege escalation attempt detected. Offender: ' . $this->Auth->user('username'), 'warning');
+                return $this->redirect(['controller' => 'Users', 'action' => 'index']);
+            }
             if (!empty($this->request->getData('newPassword'))) {
                 $user->password = $this->request->getData('newPassword');
             }
