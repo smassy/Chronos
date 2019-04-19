@@ -32,7 +32,7 @@ CREATE TABLE roles (
 -- Used for authentication/authorisation management.
 CREATE TABLE users (
     id INT UNSIGNED AUTO_INCREMENT,
-    username VARCHAR(25) UNIQUE NOT NULL,
+    username VARCHAR(25) UNIQUE NOT NULL CHARACTER SET utf8 COLLATE utf8_general_ci,
     password VARCHAR(255) NOT NULL,
     role_id TINYINT UNSIGNED NOT NULL,
     PRIMARY KEY users_pk (id),
@@ -74,6 +74,7 @@ CREATE TABLE user_details (
     FOREIGN KEY user_details_user_id_fk (user_id) REFERENCES users(id),
     FOREIGN KEY user_details_department_id_fk (department_id) REFERENCES departments(id)
 );
+ALTER TABLE user_details CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 -- managers table
 -- Stores a list of managers and their departments
