@@ -2,6 +2,9 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\I18n\Time;
+use Cake\Routing\Router;
+use Cake\Mailer\Email;
 
 /**
  * Users Controller
@@ -12,6 +15,11 @@ use App\Controller\AppController;
  */
 class UsersController extends AppController
 {
+
+    public function initialize() {
+        parent::initialize();
+        $this->Auth->allow(['pwresetreq', 'pwreset']);
+    }
 
     public function isAuthorized($user) {
         // Special cases
@@ -214,6 +222,87 @@ class UsersController extends AppController
                 $this->Flash->error("The password supplied does not match your current password.");
             }
         }
+        $this->set(compact('user'));
+    }
+
+    private function cleanExpiredTokens() {
+        $now = Time::now();
+        $expiredTokens = $this->Tokens->find()
+            ->where(['expiry <' => $now]);
+        if (!empty($expiredTokens)) {
+            foreach ($expiredTokens as $expiredToken) {
+                $this->Tokens->delete($expiredToken);
+            }
+        }
+    }
+
+    public function pwresetreq() {
+        $this->loadModel('Tokens');
+        $this->cleanExpiredTokens();
+        // No reason to be here if already logged in
+        if ($this->Auth->user('id') != null) {
+            $this->Flash->set('You are already logged in. No need for password reset.');
+            return $this->redirect(HOME);
+        }
+        // User posts a reset request 
+        if ($this->request->is('post')) {
+            $foundUser = $this->Users->find('all', ['contain' => 'UserDetails'])
+                ->where(['username' => $this->request->getData('username')])->first();
+            if (!empty($foundUser)) {
+                if ($foundUser->role_id >= ADMIN) {
+                    $this->Flash->error("System administrators may not use this service for security reasons. Please contact a colleague for manual reset.");
+                    return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+                }
+                if (!empty($foundUser->tokens)) {
+                    $this->Flash->error('Sorry, a link has already been sent to you in the last 24 hours. Please check your SPAM folder to make sure it did not get miscategorised. If you did not get a link, please contact administration.');
+                    return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+                }
+                $newToken = $this->Tokens->newEntity();
+                $newToken->user_id = $foundUser->id;
+                $newToken->token = bin2hex(random_bytes(64));
+                $newToken->expiry = Time::now()->addDays(1);
+                if ($this->Tokens->save($newToken)) {
+                    $resetLink = Router::url(['controller' => 'Users', 'action' => 'pwreset', $newToken->token], true);
+                    // Send E-mail
+                    $message = new email();
+                                        $message->from(['noreply@localhost' => 'Chronos System'])
+                        ->to($foundUser->user_detail->email)
+                        ->subject('Resetting Your Password')
+                        ->send("Hello,\nPlease use the following link in order to reset your password:\n" . $resetLink . "\nYou have 24 hours to use this link after which it will become invalid and you will need to request a new one.\nSincerely,\nThe Chronos Team");
+                    $this->log("Issued reset link for $foundUser->username: " . $resetLink, 'debug');
+                    return $this->redirect(['controller' => 'Pages', 'action' => 'pwresetsent']);
+                } else {
+                    $this->Flash->error("An error occurred. Please contact administration.");
+                }
+            }
+        }
+        // Get an empty user model to pass to the form
+        $this->set('user', $this->Users->newEntity());
+    }
+
+    public function pwreset($token = null) {
+        $this->loadModel('Tokens');
+        $this->cleanExpiredTokens();
+        if (!$token) {
+            return $this->redirect(['controller' => 'Users', 'action' => 'pwresetreq']);
+        }
+        $foundToken = $this->Tokens->find('all', ['contain' => 'Users'])
+            ->where(['token' => $token])->first();
+        if (!$foundToken) {
+            $this->Flash->error('Your token was invalid or may have expired; please make a request or contact an administrator.');
+            return $this->redirect(['controller' => 'Users', 'action' => 'pwresetreq']);
+        }
+        if ($this->request->is('post')) {
+            $foundToken->user->password = $this->request->getData('newPassword');
+            if ($this->Users->save($foundToken->user)) {
+                $this->Flash->success('Password successfully updated. Now log in.');
+                $this->Tokens->delete($foundToken);
+                return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+            } else {
+                $this->Flash->error('The password could not be updated.');
+            }
+        }
+        $user = $this->Users->newEntity();
         $this->set(compact('user'));
     }
 }

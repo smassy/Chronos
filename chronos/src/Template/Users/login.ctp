@@ -8,4 +8,5 @@
             <?= $this->Form->submit('Login', array('class' => 'button')); ?>
         <?= $this->Form->end(); ?>
     </div>
+        <div id="pwReset"><?= $this->Html->link('Forgot your password?', ['controller' => 'Users', 'action' => 'pwresetreq']) ?></div>
 </div>
