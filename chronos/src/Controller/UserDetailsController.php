@@ -23,7 +23,8 @@ class UserDetailsController extends AppController {
         if ($this->request->is('post')) {
             $keywords = explode(' ', $this->request->getData('searchFor'));
             $query = $this->UserDetails->find()
-                ->contain('Departments');
+                ->contain(['Departments', 'Users'])
+                ->where([['Users.role_id >' => INACTIVE], ['Users.role_id <' => SUPERADMIN]]);
             foreach ($keywords as $keyword) {
                 $keyword = trim($keyword);
                 $likeKeyword = '%' . $keyword . '%';
@@ -65,7 +66,10 @@ class UserDetailsController extends AppController {
             'sortWhitelist' => ['last_name', 'first_name', 'Departments.name', 'title', 'extension', 'office'],
             'order' => ['last_name' => 'asc']
         ];
-        $results = $this->paginate($this->UserDetails);
+        $results = $this->UserDetails->find()
+            ->contain(['Users', 'Departments'])
+            ->where([['Users.role_id >' => INACTIVE], ['Users.role_id <' => SUPERADMIN]]);
+        $results = $this->paginate($results);
         $this->set(compact('results'));
     }
         
