@@ -61,7 +61,9 @@ class SecretarialRelationshipsController extends AppController
             $this->Flash->error(__('The secretarial relationship could not be saved. Please, try again.'));
         }
         $users = $this->SecretarialRelationships->Users->find('list', ['limit' => 200]);
-        $this->set(compact('secretarialRelationship', 'users'));
+        $secretaryid = $this->SecretarialRelationships->Users->find('threaded' , array('conditions' => array('role_id' => 40), 'fields' => array('Users.role_id', 'Users.username') ) );
+
+        $this->set(compact('secretarialRelationship', 'users', 'secretaryid'));
     }
 
     /**

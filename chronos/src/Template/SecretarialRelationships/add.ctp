@@ -17,7 +17,7 @@
     <fieldset>
         <legend><?= __('Add Secretarial Relationship') ?></legend>
         <?php
-            echo $this->Form->control('secretary_id');
+            echo $this->Form->control('secretary_id', ['options' => $secretaryid]);
             echo $this->Form->control('user_id', ['options' => $users]);
         ?>
     </fieldset>
