@@ -187,7 +187,7 @@ class UsersController extends AppController
         if($this->request->is('post'))
         {
             $user = $this->Auth->identify();
-            if($user && $user->role_id > INACTIVE)
+            if($user && $user['role_id'] > INACTIVE)
             {
                 $this->Auth->setUser($user);
                 return $this->redirect(['controller' => 'users']);
