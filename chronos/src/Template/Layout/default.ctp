@@ -53,6 +53,18 @@ $cakeDescription = 'Chronos System';
 <?php endif; ?>
             </ul>
         </div>
+<?php if ($session->read("Auth.User.username") && $this->request->params['action'] != 'search'): ?>
+    <div class="search-bar top-bar-section">
+<?php
+echo $this->Form->create(null, ['method' => 'post', 'url' => $this->Url->build(['controller' => 'UserDetails', 'action' => 'search'])]);
+echo $this->Form->control('searchFor');
+echo $this->Form->submit('Go');
+echo $this->Form->hidden('first_name', ['value' => 1]);
+echo $this->Form->hidden('last_name', ['value' => 1]);
+echo $this->Form->end();
+?>
+    </div>
+    <?php endif; ?>
     </nav>
     <?= $this->Flash->render() ?>
     <div class="container clearfix">
