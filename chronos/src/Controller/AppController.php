@@ -56,6 +56,7 @@ class AppController extends Controller
             'enableBeforeRedirect' => false,
         ]);
         $this->loadComponent('Flash');
+        $this->loadComponent("Csrf");
         $this->loadComponent('Auth', [
             'authenticate' => [
                 'Form' => [
@@ -84,4 +85,8 @@ class AppController extends Controller
     public function isAuthorized($user) {
         return true;
     }
+
+    public function beforeFilter(Event $event) {
+    }
+
 }

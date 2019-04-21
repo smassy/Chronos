@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 use App\Controller\AppController;
+use Cake\Event\Event;
 
 /**
  * This is the UserDetails controller.
@@ -10,6 +11,7 @@ class UserDetailsController extends AppController {
 
     public function initialize() {
         parent::initialize();
+        $this->loadComponent('Csrf');
     }
 
     public function isAuthorize() {
@@ -17,8 +19,14 @@ class UserDetailsController extends AppController {
         return true;
     }
 
+    public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+        if (in_array($this->request->param('action'), ['search'])) {
+                $this->getEventManager()->off($this->Csrf);
+        }
+    }
+
     public function search() {
-        $showResults = false;
         $fields = ['last_name', 'first_name', 'title', 'department', 'extension'];
         if ($this->request->is('post')) {
             $keywords = explode(' ', $this->request->getData('searchFor'));
@@ -46,10 +54,15 @@ class UserDetailsController extends AppController {
                     $query->where(array($conditions));
                 }
             }
+            if ($this->request->is('ajax')) {
+                $this->set([
+                    'response' => $query,
+                    '_serialize' => 'response'
+                ]);
+                $this->RequestHandler->renderAs($this, 'json');
+                return;
+            }
         }
-        ob_start();
-        var_dump(array($conditions));
-        $this->log(ob_get_clean(), 'debug');
         $this->paginate = [
             'contain' => ['Departments'],
             'sortWhitelist' => ['last_name', 'first_name', 'Departments.name', 'title', 'extension', 'office'],
