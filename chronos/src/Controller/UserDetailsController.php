@@ -74,6 +74,7 @@ class UserDetailsController extends AppController {
     }
 
     public function directory() {
+        $department = false;
         $this->paginate = [
             'contain' => ['Departments'],
             'sortWhitelist' => ['last_name', 'first_name', 'Departments.name', 'title', 'extension', 'office'],
@@ -82,8 +83,13 @@ class UserDetailsController extends AppController {
         $results = $this->UserDetails->find()
             ->contain(['Users', 'Departments'])
             ->where([['Users.role_id >' => INACTIVE], ['Users.role_id <' => SUPERADMIN]]);
+        if ($this->request->getQuery('dept') == 1) {
+            $department = true;
+            $dept = $this->UserDetails->find()->where(['user_id' => $this->Auth->user('id')])->first()->department_id;
+            $results->where(['department_id' => $dept]);
+        }
         $results = $this->paginate($results);
-        $this->set(compact('results'));
+        $this->set(compact('results', 'department'));
     }
         
 }

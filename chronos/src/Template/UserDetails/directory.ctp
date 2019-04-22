@@ -1,10 +1,11 @@
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
+        <li><?= $department ? $this->Html->link('All Users', ['controller' => 'UserDetails', 'action' => 'directory']) : $this->Html->link('Departmental Users', ['controller' => 'UserDetails', 'action' => 'directory', '?' => ['dept' => 1]]); ?></li>
         <li><?= $this->Html->link("Search", ['controller' => 'UserDetails', 'action' => 'search']) ?></li>
     </ul>
 </div>
 <div class="results large-9 medium-8 columns content">
-<h3>User Directory</h3>
+<h3><?= $department ? 'Departmental' : 'User' ?> Directory</h3>
     <table cellpadding="0" cellspacing="0">
         <thead>
             <tr>
