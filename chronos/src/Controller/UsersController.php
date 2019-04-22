@@ -26,6 +26,10 @@ class UsersController extends AppController
         if (in_array($this->request->param('action'), ['changepassword', 'logout'])) {
             return true;
         }
+        // Managers can toggle secretary role
+        if ($this->request->param('action') == 'secretary' && $user['role_id'] >= MANAGER) {
+            return true;
+        }
         // Only admins can access this controller save for above actions.
         if ($user["role_id"] >= ADMIN) {
             return true;
@@ -305,4 +309,42 @@ class UsersController extends AppController
         $user = $this->Users->newEntity();
         $this->set(compact('user'));
     }
+
+    public function secretary($action = null, $id = null) {
+        // Get info about this user
+        $source = $this->Users->get($this->Auth->user('id'), ['contain' => 'UserDetails']);
+        $target = $this->Users->get($id, ['contain' => 'UserDetails']);
+        ob_start();
+        var_dump($source);
+        var_dump($target);
+        $this->log(ob_get_clean(), 'debug');
+        if ($source['role_id'] < MANAGER || ($source['user_detail']['department_id'] != $target['user_detail']['department_id'] && $source['role_id'] == MANAGER)) {
+            $this->Flash->error("You may only control secretarial role for users of the department you manage.");
+            return $this->redirect($this->referer());
+        }
+        // This functionality is only meant to toggle between two roles.
+        // Block any other attempts.
+        if ($target->role_id < USER || $target->role_id > SECRETARY) {
+            $this->Flash->error("You may not alter this user using this method.");
+            return $this->redirect($this->referer());
+        }
+        switch ($action) {
+        case 'make':
+            $target->role_id = SECRETARY;
+            break;
+        case 'unmake':
+            $target->role_id = USER;
+            break;
+        default:
+            $this->Flash->error("Unknown action.");
+            return $this->redirect($this->referer());
+        }
+        if ($this->Users->save($target)) {
+            $this->Flash->success("User role successfully updated.");
+        } else {
+            $this->Flash->error("User role could not be updated.");
+        }
+        return $this->redirect($this->referer());
+    }
+            
 }
