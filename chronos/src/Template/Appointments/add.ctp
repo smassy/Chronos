@@ -3,6 +3,10 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Appointment $appointment
  */
+$end_time = clone $apt_date;
+$end_time->setTime(19, 0);
+$cursor = clone $apt_date;
+$time_step = new \DateInterval('PT30M');
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
@@ -16,6 +20,29 @@
         <li><?= $this->Html->link(__('New Int Appointment'), ['controller' => 'IntAppointments', 'action' => 'add']) ?></li>
     </ul>
 </nav>
+<div>
+<h1>Experimental Time Slot Selection</h1>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>1st party</th>
+<th>2nd party</th>
+</tr>
+</thead>
+<tbody>
+<?php while ($cursor <= $end_time): ?>
+<tr id"=<?= $cursor->format('Hi') ?>">
+<td><?= $cursor->format('H:i') ?></td>
+<td></td>
+<td></td>
+</tr>
+<?php $cursor->add($time_step); ?>
+<?php endwhile; ?>
+</tbody>
+</table>
+
+</div>
 <div class="appointments form large-9 medium-8 columns content">
     <?= $this->Form->create($appointment) ?>
     <fieldset>
