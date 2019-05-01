@@ -3,10 +3,6 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Appointment $appointment
  */
-$end_time = clone $apt_date;
-$end_time->setTime(19, 0);
-$cursor = clone $apt_date;
-$time_step = new \DateInterval('PT30M');
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
@@ -31,14 +27,17 @@ $time_step = new \DateInterval('PT30M');
 </tr>
 </thead>
 <tbody>
-<?php while ($cursor <= $end_time): ?>
-<tr id"=<?= $cursor->format('Hi') ?>">
-<td><?= $cursor->format('H:i') ?></td>
-<td></td>
+<?php foreach ($availability as $slot): ?>
+<tr id="slot-<?= $slot['slot_time']->format('Hi') ?>">
+<td><?= $slot['slot_time']->format('H:i') ?></td>
+<?php if (!$slot['booked']): ?>
+<td class="first-party free"></td>
+<?php elseif (isset($slot['slots'])): ?>
+<td rowspan="<?= $slot['slots'] ?>" class="first-party booked"><?= $slot['title'] ?></td>
+<?php endif; ?>
 <td></td>
 </tr>
-<?php $cursor->add($time_step); ?>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </tbody>
 </table>
 
@@ -58,3 +57,9 @@ $time_step = new \DateInterval('PT30M');
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
+<script>
+//var startTime = <?= $apt_date->format('y m d, h:i') ?>;
+//var endTime = <?=json_encode($endTime) ?>;
+//var userAppointments = <?= json_encode($appointments->toList()) ?>;
+</script>
+<?= $this->Html->script('scheduler.js') ?>

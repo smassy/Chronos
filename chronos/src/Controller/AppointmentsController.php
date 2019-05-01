@@ -60,8 +60,8 @@ class AppointmentsController extends AppController
      */
     public function add($uid = null, $year = null, $month = null, $day = null)
     {
-        $apt_date = new \DateTime($year . '-' . $month . '-' . $day);
-        $apt_date->setTime(7,0);
+        $day = new \DateTime($year . '-' . $month . '-' . $day);
+        $availability = $this->Appointments->getAvailability($uid, $day);
         $appointment = $this->Appointments->newEntity();
         if ($this->request->is('post')) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
@@ -73,7 +73,7 @@ class AppointmentsController extends AppController
             $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
         }
         $users = $this->Appointments->Users->find('list', ['limit' => 200]);
-        $this->set(compact('appointment', 'users', 'apt_date'));
+        $this->set(compact('appointment', 'users', 'availability'));
     }
 
     /**
