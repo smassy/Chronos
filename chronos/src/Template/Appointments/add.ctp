@@ -18,7 +18,7 @@
 </nav>
 <div>
 <h1>Experimental Time Slot Selection</h1>
-<table>
+<table id="scheduler">
 <thead>
 <tr>
 <th>Time</th>
@@ -28,8 +28,8 @@
 </thead>
 <tbody>
 <?php foreach ($availability as $slot): ?>
-<tr id="slot-<?= $slot['slot_time']->format('Hi') ?>">
-<td><?= $slot['slot_time']->format('H:i') ?></td>
+<tr>
+<td id="slot-<?= $slot['slot_time']->format('Hi') ?>"><span><?= $slot['slot_time']->format('H:i') ?></span></td>
 <?php if (!$slot['booked']): ?>
 <td class="first-party free"></td>
 <?php elseif (isset($slot['slots'])): ?>
@@ -57,9 +57,4 @@
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
-<script>
-//var startTime = <?= $apt_date->format('y m d, h:i') ?>;
-//var endTime = <?=json_encode($endTime) ?>;
-//var userAppointments = <?= json_encode($appointments->toList()) ?>;
-</script>
 <?= $this->Html->script('scheduler.js') ?>
