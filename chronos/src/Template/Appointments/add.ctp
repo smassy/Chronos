@@ -3,6 +3,7 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Appointment $appointment
  */
+$this->Html->css("scheduler.css", ["block" => true]);
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
@@ -19,6 +20,7 @@
 <div>
 <h1>Experimental Time Slot Selection</h1>
 <table id="scheduler">
+<caption></caption>
 <thead>
 <tr>
 <th>Time</th>
@@ -26,10 +28,10 @@
 <th>2nd party</th>
 </tr>
 </thead>
-<tbody>
+<tbody id="<?= $availability[0]["slot_time"]->format('Y-m-d') ?>">
 <?php foreach ($availability as $slot): ?>
 <tr>
-<td id="slot-<?= $slot['slot_time']->format('Hi') ?>"><span><?= $slot['slot_time']->format('H:i') ?></span></td>
+<td id="slot-<?= $slot['slot_time']->format('Hi') ?>"><?= $slot['slot_time']->format('H:i') ?></td>
 <?php if (!$slot['booked']): ?>
 <td class="first-party free"></td>
 <?php elseif (isset($slot['slots'])): ?>
