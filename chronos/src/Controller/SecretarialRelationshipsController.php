@@ -51,17 +51,28 @@ class SecretarialRelationshipsController extends AppController
     public function add()
     {
         $secretarialRelationship = $this->SecretarialRelationships->newEntity();
-        if ($this->request->is('post')) {
+        if ($this->request->is('post')) 
+        {
             $secretarialRelationship = $this->SecretarialRelationships->patchEntity($secretarialRelationship, $this->request->getData());
-            if ($this->SecretarialRelationships->save($secretarialRelationship)) {
+
+            if ($this->SecretarialRelationships->save($secretarialRelationship)) 
+            {
                 $this->Flash->success(__('The secretarial relationship has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
+
             $this->Flash->error(__('The secretarial relationship could not be saved. Please, try again.'));
         }
-        $users = $this->SecretarialRelationships->Users->find('list', ['limit' => 200]);
-        $secretaryid = $this->SecretarialRelationships->Users->find('threaded' , array('conditions' => array('role_id' => 40), 'fields' => array('Users.role_id', 'Users.username') ) );
+
+        $users = $this->SecretarialRelationships->Users->find('list', ['keyField' => 'username', 'valueField' => 'username'])->where(['role_id' => 20]);
+
+        $query = $this->SecretarialRelationships->Users->find('list', ['keyField' => 'username', 'valueField' => 'username'])->where(['role_id' => 40]);
+
+        $users = $users->toArray();
+
+        $secretaryid = $query->toArray();
+
 
         $this->set(compact('secretarialRelationship', 'users', 'secretaryid'));
     }
