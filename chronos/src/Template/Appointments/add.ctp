@@ -17,6 +17,7 @@ $this->Html->css("scheduler.css", ["block" => true]);
         <li><?= $this->Html->link(__('New Int Appointment'), ['controller' => 'IntAppointments', 'action' => 'add']) ?></li>
     </ul>
 </nav>
+<?= $this->element("live-user-search") ?>
 <div>
 <h1>Experimental Time Slot Selection</h1>
 <table id="scheduler">
@@ -59,4 +60,5 @@ $this->Html->css("scheduler.css", ["block" => true]);
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
+<?= $this->Html->script('user-search.js') ?>
 <?= $this->Html->script('scheduler.js') ?>

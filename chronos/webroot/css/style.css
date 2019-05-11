@@ -522,3 +522,13 @@ table td {
     vertical-align: top;
     word-break: break-all;
 }
+
+/* for live search feature */
+ul#live-search-results-ul {
+    text-align: center;
+}
+
+ul#live-search-results-ul li {
+    display: inline-block;
+    list-style-type: none;
+}
