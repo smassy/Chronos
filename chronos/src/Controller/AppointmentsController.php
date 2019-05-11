@@ -2,6 +2,8 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
+use \DateTime;
 
 /**
  * Appointments Controller
@@ -15,7 +17,16 @@ class AppointmentsController extends AppController
 
     public function initialize() {
         parent::initialize();
+        $this->loadComponent('Csrf');
         $this->loadComponent('Calendar.Calendar');
+    }
+
+    public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+        if (in_array($this->request->param('action'), ['availability'])) {
+            $this->log("came here", 'debug');
+            $this->getEventManager()->off($this->Csrf);
+        }
     }
 
     public function isAuthorized($user) {
@@ -126,4 +137,24 @@ class AppointmentsController extends AppController
         $appointments = $this->Appointments->find('calendar', ['year' => $this->Calendar->year(), 'month' => $this->Calendar->month()]);
         $this->set(compact('appointments'));
     }
+
+    public function availability() {
+        $this->request->allowMethod('ajax');
+        if ($this->request->is('ajax')) {
+            if (preg_match('/\d\d\d\d-\d\d-\d\d/', $this->request->getData('day')) && is_numeric($this->request->getData('user_id'))) {
+                $day = new DateTime($this->request->getData('day'));
+                $response = $this->Appointments->getAvailability($this->request->getData('user_id'), $day);
+            } else {
+                $response = "Invalid request";
+            }
+            $this->set([
+                'response' => $response,
+                '_serialize' => 'response'
+            ]);
+            $this->RequestHandler->renderAs($this, 'json');
+        }
+            return;
+    }
+
+
 }
