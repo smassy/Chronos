@@ -1,0 +1,31 @@
+/* Styling for the Scheduler */
+
+// This will need to be fixed by someone who actually knows what they're doing (Hi, Anthony)
+
+/*
+ * Some important classes used:
+ * - time-slot: The cell holding the time.
+ * - available: A free time-slot (selectable/clickable)
+ * - unavailable: a time-slot which can't be selected because there is a time conflict
+ * selected: a time-slot which is currently in the selection range.
+ * first-party: a cell telinging to the column holding availability for the person creating the appointment.
+ * second-party: The other person with whom the user is trying to create an appointment (if it's an internal appointment)
+ * booked: A cell that has an appointment booked.
+ * free: A cell has no appointment set.
+*/
+
+table tr td {
+    background-color: white;
+}
+
+td.available {
+    background-color: green;
+}
+
+td.unavailable {
+    background-color: red;
+}
+
+td.selected {
+    background-color: blue;
+}

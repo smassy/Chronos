@@ -53,7 +53,7 @@ $cakeDescription = 'Chronos System';
 <?php endif; ?>
             </ul>
         </div>
-<?php if ($session->read("Auth.User.username") && $this->request->params['action'] != 'search'): ?>
+<?php if ($session->read("Auth.User.username") && $this->request->getParam('action') != 'search'): ?>
     <div class="search-bar top-bar-section">
 <?php
 echo $this->Form->create(null, ['method' => 'post', 'url' => $this->Url->build(['controller' => 'UserDetails', 'action' => 'search'])]);
