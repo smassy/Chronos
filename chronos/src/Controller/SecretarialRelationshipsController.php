@@ -12,6 +12,19 @@ use App\Controller\AppController;
  */
 class SecretarialRelationshipsController extends AppController
 {
+    public function isAuthorized($user) {
+        // Special cases
+        if (in_array($this->request->param('action'), ['changepassword', 'logout'])) {
+            return true;
+        }
+        // Only admins can access this controller save for above actions.
+        if ($user["role_id"] >= ADMIN) {
+            return true;
+        }
+        return false;
+    }
+
+
     /**
      * Index method
      *
@@ -51,28 +64,20 @@ class SecretarialRelationshipsController extends AppController
     public function add()
     {
         $secretarialRelationship = $this->SecretarialRelationships->newEntity();
-        if ($this->request->is('post')) 
-        {
+        if ($this->request->is('post')) {
             $secretarialRelationship = $this->SecretarialRelationships->patchEntity($secretarialRelationship, $this->request->getData());
-
-            if ($this->SecretarialRelationships->save($secretarialRelationship)) 
-            {
+            if ($this->SecretarialRelationships->save($secretarialRelationship)) {
                 $this->Flash->success(__('The secretarial relationship has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-
             $this->Flash->error(__('The secretarial relationship could not be saved. Please, try again.'));
         }
 
-        $users = $this->SecretarialRelationships->Users->find('list', ['keyField' => 'username', 'valueField' => 'username'])->where(['role_id' => 20]);
 
-        $query = $this->SecretarialRelationships->Users->find('list', ['keyField' => 'username', 'valueField' => 'username'])->where(['role_id' => 40]);
+        $users = $this->SecretarialRelationships->Users->find('list', array('conditions' => array('SecretarialRelationships.role_id' == '20') ) )->where();
 
-        $users = $users->toArray();
-
-        $secretaryid = $query->toArray();
-
+        $secretaryid = $this->SecretarialRelationships->Users->find('list' , array('conditions' => array('role_id' => 40) ) );
 
         $this->set(compact('secretarialRelationship', 'users', 'secretaryid'));
     }

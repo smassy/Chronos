@@ -26,6 +26,29 @@ class SecretarialRelationship extends Entity
     protected $_accessible = [
         'secretary_id' => true,
         'user_id' => true,
-        'user' => true
+        'user' => true,
+        'username' => true,
+        'password' => true,
+        'role_id' => true,
+        'role' => true,
+        'appointments' => true,
+        'int_appointments' => true,
+        'managers' => true,
+        'message_instances' => true,
+        'messages' => true,
+        'notes' => true,
+        'secretarial_relationships' => true,
+        'tokens' => true,
+        'user_details' => true,
+        'department_id' => true,
+        'email' => true,
+        'last_name' => true,
+        'first_name' => true,
+        'middle_name' => true,
+        'title' => true,
+        'office' => true,
+        'extension' => true,
+        'user' => true,
+        'department' => true
     ];
 }
