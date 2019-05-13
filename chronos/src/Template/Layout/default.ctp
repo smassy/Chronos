@@ -38,42 +38,59 @@ $cakeDescription = 'Chronos System';
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </head>
 <body>
+
+<?php if ($session->read("Auth.User.username")): ?>
+
     <nav class="top-bar expanded" data-topbar role="navigation">
         <ul class="title-area large-3 medium-4 columns">
             <li class="name">
-                <h1><a href=""><?= $this->fetch('title') ?></a></h1>
+                <h1>
+                    <a href=""><?= $this->fetch('title') ?></a>
+                </h1>
             </li>
         </ul>
         <div class="top-bar-section">
             <ul class="right">
-                <li><a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a></li>
-                <li><a target="_blank" href="https://api.cakephp.org/3.0/">API</a></li>
-<?php if ($session->read("Auth.User.username")): ?>
-                <li><?= $this->Html->link("Logout", ["controller" => "Users", "action" => "logout"]) ?> </li>
-<?php endif; ?>
+                <li>
+                    <a href="https://www.vaniercollege.qc.ca/">Vanier College</a>
+                </li>
+                <li>
+                    <a href="https://api.cakephp.org/">CakePHP</a>
+                </li>
+                <li> 
+                    <?= $this->Html->link("Logout", ["controller" => "Users", "action" => "logout"]) ?> 
+                </li>
             </ul>
         </div>
-<?php if ($session->read("Auth.User.username") && $this->request->getParam('action') != 'search'): ?>
-    <div class="search-bar top-bar-section">
-<?php
-echo $this->Form->create(null, ['method' => 'post', 'url' => $this->Url->build(['controller' => 'UserDetails', 'action' => 'search'])]);
-echo $this->Form->control('searchFor');
-echo $this->Form->submit('Go');
-echo $this->Form->hidden('first_name', ['value' => 1]);
-echo $this->Form->hidden('last_name', ['value' => 1]);
-echo $this->Form->end();
-?>
-    </div>
-    <?php endif; ?>
     </nav>
+
+<?php endif; ?>
+
     <?= $this->Flash->render() ?>
+
     <div class="container clearfix">
         <?= $this->fetch('content') ?>
     </div>
+
     <footer>
-<?php if ($session->read("Auth.User.username")): ?>
-    <p>Logged in as <?= $session->read("Auth.User.username") ?>.</p>
-<?php endif; ?>
+        <?php if ($session->read("Auth.User.username")): ?>
+        <p> Logged in as <?= $session->read("Auth.User.username") ?>.</p>
     </footer>
+
+        <?php if ($session->read("Auth.User.username") && $this->request->getParam('action') != 'search'): ?>
+            <div class="search-bar top-bar-section">
+                <?php
+                    echo $this->Form->create(null, ['method' => 'post', 'url' => $this->Url->build(['controller' => 'UserDetails', 'action' => 'search'])]);
+                    echo $this->Form->control('Search Bar:');
+                    echo $this->Form->submit('Go');
+                    echo $this->Form->hidden('first_name', ['value' => 1]);
+                    echo $this->Form->hidden('last_name', ['value' => 1]);
+                    echo $this->Form->end();
+                ?> 
+            </div>
+        <?php endif; ?>
+        
+<?php endif; ?>
+
 </body>
 </html>
