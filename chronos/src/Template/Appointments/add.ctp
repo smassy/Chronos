@@ -3,7 +3,7 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Appointment $appointment
  */
-$this->Html->css("scheduler.css", ["block" => true]);
+//$this->Html->css("scheduler.css", ["block" => true]);
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
@@ -17,42 +17,21 @@ $this->Html->css("scheduler.css", ["block" => true]);
         <li><?= $this->Html->link(__('New Int Appointment'), ['controller' => 'IntAppointments', 'action' => 'add']) ?></li>
     </ul>
 </nav>
+<div id="user-time-select">
 <?= $this->element("live-user-search") ?>
-<div>
-<h1>Experimental Time Slot Selection</h1>
-<table id="scheduler">
-<caption></caption>
-<thead>
-<tr>
-<th>Time</th>
-<th>1st party</th>
-<th>2nd party</th>
-</tr>
-</thead>
-<tbody id="<?= $availability[0]["slot_time"]->format('Y-m-d') ?>">
-<?php foreach ($availability as $slot): ?>
-<tr>
-<td id="slot-<?= $slot['slot_time']->format('Hi') ?>"><?= $slot['slot_time']->format('H:i') ?></td>
-<?php if (!$slot['booked']): ?>
-<td class="first-party free"></td>
-<?php elseif (isset($slot['slots'])): ?>
-<td rowspan="<?= $slot['slots'] ?>" class="first-party booked"><?= $slot['title'] ?></td>
-<?php endif; ?>
-<td></td>
-</tr>
-<?php endforeach; ?>
-</tbody>
-</table>
-
+<?= $this->element("scheduler") ?>
 </div>
 <div class="appointments form large-9 medium-8 columns content">
     <?= $this->Form->create($appointment) ?>
     <fieldset>
         <legend><?= __('Add Appointment') ?></legend>
+        <div class="form-group" id="int-appointment">
+        <input name="int_appointment.user_id" type="hidden" id="int_party" />
+        <?= $this->Form->control("party_name", ["id" => "party_name", "readonly", 'required']) ?>
+        
         <?php
-            echo $this->Form->control('user_id', ['options' => $users]);
-            echo $this->Form->control('start_time');
-            echo $this->Form->control('end_time');
+            echo $this->Form->control('start_time', ['id' => 'startTime', 'type' => 'text', 'readonly']);
+            echo $this->Form->control('end_time', ['id' => 'endTime', 'type' => 'text', 'readonly']);
             echo $this->Form->control('title');
             echo $this->Form->control('details');
         ?>
@@ -62,3 +41,12 @@ $this->Html->css("scheduler.css", ["block" => true]);
 </div>
 <?= $this->Html->script('user-search.js') ?>
 <?= $this->Html->script('scheduler.js') ?>
+<script>
+function addUserClickHandler() {
+    $("#party_name").val($(this).html());
+    var user_id = $(this).attr("id").toString().replace("user-", "");
+    $("input#int_party").val(user_id);
+    resetScheduler();
+}
+liveSearchClickHandler = addUserClickHandler;
+</script>

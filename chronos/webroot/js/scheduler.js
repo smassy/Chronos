@@ -16,10 +16,11 @@ function resetScheduler() {
         $(this).off();
         $(this).attr("role", "");
     });
-    $(sched).find("td:last-child").each( function () {
-        $(this).removeClass("booked free");
-    });
-    setupSlots();
+    $(sched).find("td.second-party").remove();
+    $("input#startTime").val("");
+    $("input#endTime").val("");
+    $(sched).find("th.second-party-hdr").html("Please select a party...");
+    checkSecondParty();
 }
 
 function setupSlots() {
@@ -35,11 +36,13 @@ function setupSlots() {
         } else {
             $(timeSlot).addClass("time-slot unavailable");
             if (span === 0 || !span) {
-                span = parseInt($(row).find(".first-party").attr("rowspan")) - 1;
                 group++;
-            } else { 
-                span--;
-            }
+            }  
+            var spanValues = [span - 1];
+            $(this).find(".booked").each( function () {
+                spanValues.push(parseInt($(this).attr("rowspan")) - 1);
+            });
+            span = Math.max.apply(null, spanValues);
         }
     });
 }
@@ -78,12 +81,8 @@ function refreshSelection() {
             select = false;
         }
     });
-//    $(startTimeSlot).addClass("selected");
-//    if (startTimeSlot != endTimeSlot) {
-//        $(startTimeSlot).nextUntil(endTimeSlot, ".time_slot").addClass("selected");
-//        $(endTimeSlot).addClass("selected");
-//    }
-    $(sched).find("caption").html("Start Time " + startTime.toString() + " and end time " + endTime.toString());
+    $("input#startTime").val(getTimeString(startTime));
+    $("input#endTime").val(getTimeString(endTime));
 }
 
 function getSlotEnd(date) {
@@ -105,7 +104,47 @@ function getTimeString(date) {
     return hours + ":" + minutes;
 }
 
+function checkSecondParty() {
+    if ($("#int_party").val() === "") {
+    return;
+    }
+    $.post({
+        url: "/appointments/availability",
+        dataType: 'text',
+        type: 'post',
+        contentType: 'application/x-www-form-urlencoded',
+        data: {"day": dayString, "user_id": $("#int_party").val()},
+        success: updateSecondParty,
+        error: function (xhr, status, error) {
+            console.log(status + ": " + error);
+        }
+    });
+}
+
+function updateSecondParty(data, status, xhr) {
+    data = JSON.parse(data);
+    var slots = $(sched).find("tbody tr");
+    var span = 0;
+    var content;
+    $(sched).find("th.second-party-hdr").html($("#party_name").val());
+    for (var i = 0; i < data.length; i++) {
+        if (span === 0) {
+            if (data[i]["booked"]) {
+                content = "<td class=\"second-party booked\" rowspan=\"" + data[i]["slots"] + "\">" + data[i]["title"] + "</td>";
+                span = data[i]["slots"] - 1;
+            } else {
+                content = "<td class=\"second-party free\"></td>";
+            }
+            $(slots[i]).append(content);
+        } else {
+            span--;
+        }
+    }
+    setupSlots();
+}
+
 $(document).ready( function () {
     resetScheduler();
+    setupSlots();
 });
 

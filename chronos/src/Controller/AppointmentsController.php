@@ -72,6 +72,8 @@ class AppointmentsController extends AppController
     public function add($uid = null, $year = null, $month = null, $day = null)
     {
         $day = new \DateTime($year . '-' . $month . '-' . $day);
+        $this->loadModel("UserDetails");
+        $firstParty = $this->UserDetails->find()->where(['user_id' => $uid])->first();
         $availability = $this->Appointments->getAvailability($uid, $day);
         $appointment = $this->Appointments->newEntity();
         if ($this->request->is('post')) {
@@ -84,7 +86,7 @@ class AppointmentsController extends AppController
             $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
         }
         $users = $this->Appointments->Users->find('list', ['limit' => 200]);
-        $this->set(compact('appointment', 'users', 'availability'));
+        $this->set(compact('appointment', 'users', 'availability', 'day', 'firstParty'));
     }
 
     /**
