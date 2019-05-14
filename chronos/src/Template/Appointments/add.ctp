@@ -26,10 +26,11 @@
     <fieldset>
         <legend><?= __('Add Appointment') ?></legend>
         <div class="form-group" id="int-appointment">
-        <input name="int_appointment.user_id" type="hidden" id="int_party" />
+        <input name="int_party" type="hidden" id="int_party" />
         <?= $this->Form->control("party_name", ["id" => "party_name", "readonly", 'required']) ?>
         
         <?php
+            echo $this->Form->control('aptType', ['id' => 'aptType', 'type' => 'hidden', 'value' => 'int']);
             echo $this->Form->control('start_time', ['id' => 'startTime', 'type' => 'text', 'readonly']);
             echo $this->Form->control('end_time', ['id' => 'endTime', 'type' => 'text', 'readonly']);
             echo $this->Form->control('title');

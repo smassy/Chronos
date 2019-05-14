@@ -24,7 +24,6 @@ class AppointmentsController extends AppController
     public function beforeFilter(Event $event) {
         parent::beforeFilter($event);
         if (in_array($this->request->param('action'), ['availability'])) {
-            $this->log("came here", 'debug');
             $this->getEventManager()->off($this->Csrf);
         }
     }
@@ -77,7 +76,17 @@ class AppointmentsController extends AppController
         $availability = $this->Appointments->getAvailability($uid, $day);
         $appointment = $this->Appointments->newEntity();
         if ($this->request->is('post')) {
-            $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
+                        $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
+            $appointment->start_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData("start_time"));
+            $appointment->end_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData("end_time"));
+            $appointment->user_id = $uid;
+            if ($this->request->getData('aptType') === 'int') {
+                $int_appointment = $this->Appointments->IntAppointments->newEntity();
+                $int_appointment->user_id = $this->request->getData('int_party');
+                $this->log('user id' . $this->request->getData('int_party'), 'debug');
+                $int_appointment->confirmed = false;
+                $appointment['int_appointments'] = array($int_appointment);
+            }
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('The appointment has been saved.'));
 
