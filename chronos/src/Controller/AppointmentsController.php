@@ -86,6 +86,13 @@ class AppointmentsController extends AppController
                 $this->log('user id' . $this->request->getData('int_party'), 'debug');
                 $int_appointment->confirmed = false;
                 $appointment['int_appointments'] = array($int_appointment);
+            } elseif ($this->request->getData('aptType') === 'ext') {
+                $extApt = $this->Appointments->ExtAppointments->newEntity();
+                $extApt->party = $this->request->getData('party');
+                $extApt->info = $this->request->getData('info');
+                $appointment['ext_appointment'] = $extApt;
+            } else {
+                $this->Flash->error("Unknown appointment type.");
             }
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('The appointment has been saved.'));
