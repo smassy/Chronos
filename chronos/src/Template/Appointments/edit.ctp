@@ -40,8 +40,8 @@
 <?php endif; ?>
         <?php
             echo $this->Form->control('type', ['id' => 'aptType', 'type' => 'hidden']);
-            echo $this->Form->control('start_time', ['id' => 'startTime', 'value' => $appointment->start_time->format("h:i"), 'type' => 'text', 'readonly']);
-            echo $this->Form->control('end_time', ['id' => 'endTime', 'value' => $appointment->end_time->format("h:i"), 'type' => 'text', 'readonly']);
+            echo $this->Form->control('start_time', ['id' => 'startTime', 'value' => $appointment->start_time->format("H:i"), 'type' => 'text', 'readonly']);
+            echo $this->Form->control('end_time', ['id' => 'endTime', 'value' => $appointment->end_time->format("H:i"), 'type' => 'text', 'readonly']);
             echo $this->Form->control('title');
             echo $this->Form->control('details');
         ?>
@@ -56,6 +56,7 @@ var editMode = <?= (isset($editMode)) ? 'true' : 'false'?>;
 function syncScheduler() {
     startTime = new Date(dayString + " " + $("input#startTime").val());
     startTimeSlot = $("td#slot-" + $("input#startTime").val().toString().replace(":", ""));
+    currentGroup = $(startTimeSlot).get(0).className.match(/group-\d+/).toString();
     endTime = new Date(dayString + " " + $("input#endTime").val());
     var lastSlot = getSlotStart(endTime);
     endTimeSlot = $("td#slot-" + getTimeString(lastSlot).replace(":", ""));

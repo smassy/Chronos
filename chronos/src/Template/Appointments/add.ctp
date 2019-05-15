@@ -49,6 +49,7 @@
 <?= $this->Html->script('scheduler.js') ?>
 <script>
 'use strict';
+var editMode = false;
 function addUserClickHandler() {
     $("#party_name").val($(this).html());
     var user_id = $(this).attr("id").toString().replace("user-", "");

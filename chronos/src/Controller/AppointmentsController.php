@@ -127,8 +127,11 @@ class AppointmentsController extends AppController
         $appointment = $this->Appointments->get($id, [
             'contain' => ['IntAppointments' => ['Users' => ['UserDetails']], 'ExtAppointments']
         ]);
+        $day = $appointment->start_time;
         if ($this->request->is(['patch', 'post', 'put'])) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
+            $appointment->start_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData('start_time'));
+            $appointment->end_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData('end_time'));
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('The appointment has been saved.'));
 
@@ -144,7 +147,6 @@ class AppointmentsController extends AppController
         $availability = $this->Appointments->getAvailability($appointment->user_id, new \DateTime($appointment->start_time->format('Y-m-d')));
         $this->loadModel("UserDetails");
         $firstParty = $this->UserDetails->find()->where(['user_id' => $appointment->user_id])->first();
-        $day = $appointment->start_time;
         $editMode = true;
         $this->set(compact('appointment', 'availability', 'firstParty', 'day', 'editMode'));
     }
