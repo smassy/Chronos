@@ -70,7 +70,17 @@ class AppointmentsController extends AppController
      */
     public function add($uid = null, $year = null, $month = null, $day = null)
     {
-        $day = new \DateTime($year . '-' . $month . '-' . $day);
+        if (($year && $month && $day)) {
+            $day = new \DateTime($year . '-' . $month . '-' . $day);
+            $today = new \DateTime();
+            $today->setTime(0,0);
+            if ($day < $today) {
+                $this->Flash->error("You can't create an appointment in the past!");
+                $this->redirect(HOME);
+            }
+        } else {
+            $day = new \DateTime();
+        }
         $this->loadModel("UserDetails");
         $firstParty = $this->UserDetails->find()->where(['user_id' => $uid])->first();
         $availability = $this->Appointments->getAvailability($uid, $day);

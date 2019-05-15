@@ -49,6 +49,10 @@ function setupSlots() {
 
 function slotClickHandler() {
     var clickedTime = new Date(dayString + " " + $(this).html());
+    if (clickedTime < new Date()) {
+        alert("You are trying to select a time slot in the past; you need a time machine.");
+        return;
+    }
     var group = $(this).get(0).className.match(/group-\d+/).toString();
     if (!startTime || group != currentGroup || (clickedTime >= startTime && clickedTime < endTime)) {
         startTime = clickedTime;
