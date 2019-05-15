@@ -26,6 +26,7 @@ function resetScheduler() {
 }
 
 function setupSlots() {
+    $("td.time-slot").off();
     var span = 0;
     var group = 0;
     $(sched).find("tbody tr").each( function () {
@@ -83,7 +84,7 @@ function refreshSelection() {
         if (select) {
             $(this).addClass("selected");
         }
-        if (this === endTimeSlot) {
+        if ($(this).html() === $(endTimeSlot).html()) {
             select = false;
         }
     });
