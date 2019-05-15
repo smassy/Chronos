@@ -15,7 +15,7 @@
 <td id="slot-<?= $slot['slot_time']->format('Hi') ?>"><?= $slot['slot_time']->format('H:i') ?></td>
 <?php if (!$slot['booked']): ?>
 <td class="first-party free"></td>
-<?php elseif (isset($slot['slots'])): ?>
+<?php elseif (isset($slot['slots']) && !(isset($editMode) && $slot["slot_time"] == $appointment->start_time)): ?>
 <td rowspan="<?= $slot['slots'] ?>" class="first-party booked"><?= $slot['title'] ?></td>
 <?php endif; ?>
 <td class="second-party"></td>

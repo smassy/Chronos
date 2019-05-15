@@ -125,7 +125,7 @@ class AppointmentsController extends AppController
     public function edit($id = null)
     {
         $appointment = $this->Appointments->get($id, [
-            'contain' => []
+            'contain' => ['IntAppointments' => ['Users' => ['UserDetails']], 'ExtAppointments']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
@@ -136,8 +136,17 @@ class AppointmentsController extends AppController
             }
             $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
         }
-        $users = $this->Appointments->Users->find('list', ['limit' => 200]);
-        $this->set(compact('appointment', 'users'));
+        if ($appointment['int_appointments']) {
+            $appointment['type'] = 'int';
+        } else {
+            $appointment['type'] = 'ext';
+    }
+        $availability = $this->Appointments->getAvailability($appointment->user_id, new \DateTime($appointment->start_time->format('Y-m-d')));
+        $this->loadModel("UserDetails");
+        $firstParty = $this->UserDetails->find()->where(['user_id' => $appointment->user_id])->first();
+        $day = $appointment->start_time;
+        $editMode = true;
+        $this->set(compact('appointment', 'availability', 'firstParty', 'day', 'editMode'));
     }
 
     /**

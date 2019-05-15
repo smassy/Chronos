@@ -17,8 +17,10 @@ function resetScheduler() {
         $(this).attr("role", "");
     });
     $(sched).find("td.second-party").remove();
-    $("input#startTime").val("");
-    $("input#endTime").val("");
+    if (!editMode) {
+        $("input#startTime").val("");
+        $("input#endTime").val("");
+    }
     $(sched).find("th.second-party-hdr").html("Please select a party...");
     checkSecondParty();
 }
@@ -75,7 +77,7 @@ function refreshSelection() {
     var select = false;
     $(slots).removeClass("selected");
     $(slots).each(function () {
-        if (this === startTimeSlot) {
+        if ($(this).html() === $(startTimeSlot).html()) {
             select = true;
         }
         if (select) {
@@ -89,10 +91,15 @@ function refreshSelection() {
     $("input#endTime").val(getTimeString(endTime));
 }
 
+function getSlotStart(date) {
+    var minutes = 29;
+    var interval = (minutes * 60) * 1000;
+    return new Date(date.getTime() - interval);
+}
+
 function getSlotEnd(date) {
     var minutes = 29;
-    var seconds = 59;
-    var interval = (minutes * 60 + seconds) * 1000;
+    var interval = (minutes * 60) * 1000;
     return new Date(date.getTime() + interval);
 }
 
