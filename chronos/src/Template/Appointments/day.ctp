@@ -8,7 +8,13 @@
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('List Appointments'), ['action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Appointment'), ['action' => 'add']) ?> </li>
+<?php
+$now = new \DateTime();
+$now->setTime(0,0);
+if ($day >= $now):
+?>
+        <li><?= $this->Html->link(__('New Appointment'), ['action' => 'add', $firstParty->user_id, $day->format('Y'), $day->format('m'), $day->format('d')]) ?> </li>
+<?php endif; ?>
     </ul>
 </nav>
 <div class="appointments view large-9 medium-8 columns content">

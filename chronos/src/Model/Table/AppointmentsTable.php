@@ -150,6 +150,7 @@ class AppointmentsTable extends Table
                     $slotInfo['start'] = $apt->start_time;
                     $slotInfo['end'] = $apt->end_time;
                     $slotInfo['title'] = $apt->title;
+                    $slotInfo['aptId'] = $apt->id;
                 } else {
                     $slotInfo['booked'] = false;
                 }

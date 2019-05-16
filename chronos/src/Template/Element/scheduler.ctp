@@ -16,7 +16,7 @@
 <?php if (!$slot['booked']): ?>
 <td class="first-party free"></td>
 <?php elseif (isset($slot['slots']) && !(isset($editMode) && $slot["slot_time"] == $appointment->start_time)): ?>
-<td rowspan="<?= $slot['slots'] ?>" class="first-party booked"><?= $slot['title'] ?></td>
+<td rowspan="<?= $slot['slots'] ?>" class="first-party booked"><?= $this->Html->link($slot['title'], ['action' => 'view', $slot['aptId']]) ?></td>
 <?php endif; ?>
 <td class="second-party"></td>
 </tr>

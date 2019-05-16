@@ -198,6 +198,19 @@ class AppointmentsController extends AppController
         $this->set(compact('appointments'));
     }
 
+    public function day($uid, $year = null, $month = null, $day = null) {
+        if ($year && $month && $day) {
+            $day = new \DateTime($year . '-' . $month . '-' . $day);
+        } else {
+            $day = new \DateTime();
+        }
+        $availability = $this->Appointments->getAvailability($uid, $day);
+        $this->loadModel('UserDetails');
+        $firstParty = $this->UserDetails->find()->where(['user_id' => $uid])->first();
+        $this->set(compact('availability', 'firstParty', 'day'));
+    }
+
+
     public function confirm($id) {
         $appointment = $this->Appointments->get($id, ['contain' => ['IntAppointments']]);
         if ($appointment['int_appointments']) {
