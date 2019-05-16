@@ -12,6 +12,7 @@
         <li><?= $this->Html->link(__('New Department'), ['action' => 'add']) ?> </li>
         <li><?= $this->Html->link(__('List Secretarial Relationships'), ['controller' => 'SecretarialRelationships', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Secretarial Relationship'), ['controller' => 'SecretarialRelationships', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('View Appointments'), ['controller' => 'Appointments', 'action' => 'index']) ?></li>
     </ul>
 </nav>
 <div class="users index large-9 medium-8 columns content">

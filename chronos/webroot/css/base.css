@@ -35,14 +35,18 @@ aside,
 details,
 figcaption,
 figure,
-footer,
+footer
+{
+    text-align: center;
+},
 header,
 hgroup,
 main,
 menu,
 nav,
 section,
-summary {
+summary 
+{
     display: block;
 }
 
@@ -57,7 +61,7 @@ progress,
 video {
     display: inline-block; /* 1 */
     vertical-align: baseline; /* 2 */
-}
+}footer
 
 /**
  * Prevent modern browsers from displaying `audio` without controls.
