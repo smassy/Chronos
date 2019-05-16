@@ -326,6 +326,17 @@ pre {
     background: #116d76;
 }
 
+.search-bar
+{
+    float: none;
+    padding: 6px;
+    border: none;
+    margin-top: 8px;
+    margin-right: 16px;
+    font-size: 17px;
+    background-color: yellow;
+}
+
 .top-bar-section li:not(.has-form) a:not(.button):hover {
     background-color: #308e97;
     background: #308e97;

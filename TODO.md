@@ -1,29 +1,30 @@
-# TODO 
+# TODO (Revised)
 
-__Final deadline April 30__
+__Final deadline May 16, Presentation May 13__
 
-## This week (preferably before week-end) (April 19)
+## This week-end
 
-- (DONE) Implement password reset
-- (DONE) Implement work flow for creating user Details (redirect admin to create user detail when done creating user).
-- (DONE) Implement user detail creation/management.
-- (DONE) Add authorisation functions to Departments, Managers and User Details.
-- (DONE) Implement user search. (SM)
+- URGENT: Secretarial relationships (AL)
+- URGENT: Complete appointment CRUD actions. (SM)
+- URGENT: Appointments Day/Month view (SM)
+- (BLOCKED by previous) URGENT: Styling for booking UI and appointment forms/views (Month view, day view, appointments CRUD actions, appointment override) (AL)
+- URGENT: Special appointments for managers/secretaries with overrides (SM)
+- HIGH: Styling for site, navigation, search bar, etc. (AL)
+- HIGH: Basic messaging implementation (AL)
+- (BLOCKED by previous) MEDIUM: Implement message dispatch an appointment actions (SM)
+- HIGH: Upload to shared hosting for presentation and teacher evaluation. (SM)
+- HIGH: Create fake data for presentation (SM/AL)
 
-## By end of week-end (April 22):
-- (DONE) Finish search (AJAX) (SM)
-- Secretarial relationships (AL)
-- (Started) Appointments (SM/AL)
-- *?) Research calendar/dayplanner for the UI and come up with prototype (not necessarily wired to system). (AL)
+## Before 16th:
 
-## Later/unspecified (preferably by April 28)
+- Full messaging (SM)
+- Attachments (SM)
+- Refine interface (AL)
+- (OPTIONAL) Note Taking (AL)
 
-- Implement fully working appointment display and booking UI.
-- Implement special case booking for Managers/Secretaries
-- Implement Messaging system.
-- Implement attachments.
-- Implement group messaging: secretaries, maangers
+## Submission
 
-## If we ever have time 
+- Record Screencast (AL)
+- Update CA user-stories (SM)
+- Proof text and submit CA (SM/AL)
 
-- Note-taking

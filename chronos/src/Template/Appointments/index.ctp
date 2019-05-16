@@ -3,11 +3,20 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Appointment[]|\Cake\Collection\CollectionInterface $appointments
  */
+$session = $this->getRequest()->getSession();
 ?>
+
+<?php
+    $year = date('Y');
+    $month = date('m');
+    $day = date('d');
+    $id = $session->read("Auth.User.id");
+?>
+
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('New Appointment'), ['action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('New Appointment'), ['action' => 'add', $id, $year, $month, $day ]) ?></li>
         <li><?= $this->Html->link(__('List Users'), ['controller' => 'Users', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New User'), ['controller' => 'Users', 'action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List Ext Appointments'), ['controller' => 'ExtAppointments', 'action' => 'index']) ?></li>
