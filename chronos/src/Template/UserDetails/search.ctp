@@ -44,7 +44,7 @@ echo $this->Form->control('extension', ['type' => 'checkbox']);
                             <td><?= $result->title ?></td>
                             <td><?= $result->extension ?></td>
                             <td><?= $result->office ?></td>
-                            <td class="actions"></td>
+                            <td class="actions"><?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'month', '?' => ['uid' => $result->user_id]])?></td>
                         </td>
                         <?php endforeach; ?>
                     </tbody>

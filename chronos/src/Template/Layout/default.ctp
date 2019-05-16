@@ -57,6 +57,11 @@ $cakeDescription = 'Chronos System';
                 <li>
                     <a href="https://api.cakephp.org/">CakePHP</a>
                 </li>
+                <li><?= $this->Html->link('Your Month', ['controller' => 'Appointments', 'action' => 'month', '?' => ['uid', $session->read('Auth.User.id')]]) ?> </li>
+                <li><?= $this->Html->link('User Directory', ['controller' => 'UserDetails', 'action' => 'directory'])?></li>
+<?php if ($session->read('Auth.User.role_id') >= 200): ?>
+                <li><?= $this->Html->link('Manage Users', ['controller' => 'Users', 'action' => 'index'])?></li>
+<?php endif; ?>
                 <li> 
                     <?= $this->Html->link("Logout", ["controller" => "Users", "action" => "logout"]) ?> 
                 </li>
