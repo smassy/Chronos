@@ -4,9 +4,15 @@
  * @var \App\Model\Entity\Appointment $appointment
  */
 $day = $appointment->start_time;
+$session = $this->getRequest()->getSession();
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
+<?php
+if ($appointment['type'] === 'int' && $appointment['int_appointments'][0]['confirmed'] === 0 && in_array($session->read('Auth.User.id, $confirmUsers)) {
+    echo "<li>" . $this->Html->link('Confirm Appointment', ['action' => 'confirm', $appointment->id]) . '</li>';
+}
+?>
         <li class="heading"><?= __('Actions') ?></li>
 <?php if ($day > new \DateTime()): ?>
         <li><?= $this->Html->link(__('Edit Appointment'), ['action' => 'edit', $appointment->id]) ?> </li>

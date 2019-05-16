@@ -194,7 +194,7 @@ class UsersController extends AppController
             if($user && $user['role_id'] > INACTIVE)
             {
                 $this->Auth->setUser($user);
-                return $this->redirect(['controller' => 'users']);
+                return $this->redirect(HOME);
             }
             //Bad Login
             $this->Flash->error('Incorrect Login');
