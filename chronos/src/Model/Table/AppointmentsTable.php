@@ -135,8 +135,10 @@ class AppointmentsTable extends Table
             $slotInfo = ['slot_time' => clone $timeCursor];
             if (!$aptStart) {
                 $apt = $this->find()
-                    ->where(['start_time' => $timeCursor, 'user_id' => $user])
-                    ->first();
+                       ->where(['start_time' => $timeCursor])
+                    ->innerJoinWith('IntAppointments', function ($q) use ($user) {
+                        return $q->where(['OR' => ['Appointments.user_id' => $user, 'IntAppointments.user_id' => $user]]);
+                        })->first();
                 if ($apt) {
                     if ((clone $apt->start_time)->add($step) < $apt->end_time) {
                         $aptStart = $apt->start_time;

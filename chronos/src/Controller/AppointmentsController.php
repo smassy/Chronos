@@ -198,7 +198,10 @@ class AppointmentsController extends AppController
             $uid = $this->Auth->user('id');
         }
         $this->Calendar->init($year, $month);
-        $appointments = $this->Appointments->find('calendar', ['year' => $this->Calendar->year(), 'month' => $this->Calendar->month()])->where(['user_id' => $uid]);
+        $appointments = $this->Appointments->find('calendar', ['year' => $this->Calendar->year(), 'month' => $this->Calendar->month()])
+            ->innerJoinWith('IntAppointments', function ($q) use ($uid) {
+                return $q->where(['OR' => ['Appointments.user_id' => $uid, 'IntAppointments.user_id' => $uid]]);
+            });
         $this->loadModel('UserDetails');
         $firstParty = $this->UserDetails->find()->where(['user_id' => $uid])->first();
         $this->set(compact('appointments', 'firstParty'));
