@@ -86,7 +86,7 @@ $cakeDescription = 'Chronos System';
             <div class="search-bar top-bar-section">
                 <?php
                     echo $this->Form->create(null, ['method' => 'post', 'url' => $this->Url->build(['controller' => 'UserDetails', 'action' => 'search'], true)]);
-                    echo $this->Form->control('Search Bar:');
+                    echo $this->Form->control('searchFor', ['label' => 'Search Bar:']);
                     echo $this->Form->submit('Go');
                     echo $this->Form->hidden('first_name', ['value' => 1]);
                     echo $this->Form->hidden('last_name', ['value' => 1]);
