@@ -111,7 +111,7 @@ class AppointmentsController extends AppController
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('The appointment has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'day', $uid, $day->format('Y'), $day->format('m'), $day->format('d')]);
             }
             $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
         }
@@ -149,7 +149,7 @@ class AppointmentsController extends AppController
             if ($this->Appointments->save($appointment) && $this->Appointments->IntAppointments->save($appointment['int_appointments'][0])) {
                 $this->Flash->success(__('The appointment has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'day', $uid, $day->format('Y'), $day->format('m'), $day->format('d')]);
             }
             $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
         }
@@ -189,7 +189,7 @@ class AppointmentsController extends AppController
             $this->Flash->error(__('The appointment could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect(HOME);
     }
 
     public function month($year = null, $month = null) {

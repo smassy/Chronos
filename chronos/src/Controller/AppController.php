@@ -26,7 +26,7 @@ const MANAGER = 120;
 const ADMIN = 220;
 const SUPERADMIN = 255;
 // Default route home
-const HOME = ['controller' => 'Users', 'action' => 'index'];
+const HOME = ['controller' => 'Appointments', 'action' => 'month'];
 
 /**
  * Application Controller
