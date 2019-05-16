@@ -12,15 +12,16 @@
         <li><?= $this->Html->link(__('List Users'), ['controller' => 'Users', 'action' => 'index']) ?></li>
     </ul>
 </nav>
+<div class="users index large-9 medium-8 columns content">
 <div id="user-time-select">
-<?= $this->element("live-user-search") ?>
-<?= $this->element("scheduler") ?>
+	<?= $this->element("live-user-search") ?>
+	<?= $this->element("scheduler") ?>
 </div>
 <div class="appointments form large-9 medium-8 columns content">
     <?= $this->Form->create($appointment) ?>
     <fieldset>
         <legend id="lgnd"><?= __('New internal Appointment') ?></legend>
-<button click="switchApt" id="switchApt">Switch To External Appointment</button>
+		<button click="switchApt" id="switchApt">Switch To External Appointment</button>
         <div class="form-group" id="int-appointment">
         <input name="int_party" type="hidden" id="int_party" />
         <?= $this->Form->control("party_name", ["id" => "party_name", "readonly", 'required']) ?>
@@ -39,6 +40,7 @@
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
+</div>
 </div>
 <?= $this->Html->script('user-search.js') ?>
 <?= $this->Html->script('scheduler.js') ?>
