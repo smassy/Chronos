@@ -57,9 +57,13 @@ class AppointmentsController extends AppController
     public function view($id = null)
     {
         $appointment = $this->Appointments->get($id, [
-            'contain' => ['Users', 'ExtAppointments', 'IntAppointments']
+            'contain' => ['Users' => ['UserDetails'], 'ExtAppointments', 'IntAppointments' => ['Users' => ['UserDetails' => ['Departments']]]]
         ]);
-
+        if ($appointment['int_appointments']) {
+            $appointment['type'] = 'int';
+        } else {
+            $appointment['type'] = 'ext';
+    }
         $this->set('appointment', $appointment);
     }
 
@@ -127,12 +131,22 @@ class AppointmentsController extends AppController
         $appointment = $this->Appointments->get($id, [
             'contain' => ['IntAppointments' => ['Users' => ['UserDetails']], 'ExtAppointments']
         ]);
+        if ($appointment->start_time < new \DateTime()) {
+            $this->Flash->error("This appointment is in thje past, it may no longer be modified.");
+            $this->redirect($this->referer());
+        }
         $day = $appointment->start_time;
         if ($this->request->is(['patch', 'post', 'put'])) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
             $appointment->start_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData('start_time'));
             $appointment->end_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData('end_time'));
-            if ($this->Appointments->save($appointment)) {
+            if ($appointment['int_appointments']) {
+                $this->log('cnf ' . $appointment['int_appointments'][0]['confirmed'], 'debug');
+                $appointment['int_appointments'][0]['confirmed'] = 0;
+                $this->log('cnf ' . $appointment['int_appointments'][0]['confirmed'], 'debug');
+
+            }
+            if ($this->Appointments->save($appointment) && $this->Appointments->IntAppointments->save($appointment['int_appointments'][0])) {
                 $this->Flash->success(__('The appointment has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -161,7 +175,14 @@ class AppointmentsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $appointment = $this->Appointments->get($id);
+        $appointment = $this->Appointments->get($id, ['contain' => ['IntAppointments', 'ExtAppointments']]);
+        if ($appointment['int_appointments']) {
+            foreach ($appointment['int_appointments'] as $iapt) {
+                $this->Appointments->IntAppointments->delete($iapt);
+            }
+        } else {
+            $this->Appointments->ExtAppointments->delete($appointment['ext_appointment']);
+        }
         if ($this->Appointments->delete($appointment)) {
             $this->Flash->success(__('The appointment has been deleted.'));
         } else {
@@ -175,6 +196,19 @@ class AppointmentsController extends AppController
         $this->Calendar->init($year, $month);
         $appointments = $this->Appointments->find('calendar', ['year' => $this->Calendar->year(), 'month' => $this->Calendar->month()]);
         $this->set(compact('appointments'));
+    }
+
+    public function confirm($id) {
+        $appointment = $this->Appointments->get($id, ['contain' => ['IntAppointments']]);
+        if ($appointment['int_appointments']) {
+            $appointment['int_appointments'][0]['confirmed'] = 1;
+            if ($this->Appointments->IntAppointments->save($appointment['int_appointments'][0])) {
+                $this->Flash->success("Appointment successfully confirmed");
+            } else {
+                $this->Flash->error("Appointment could not be confirmed.");
+            }
+        }
+        $this->redirect($this->referer());
     }
 
     public function availability() {
