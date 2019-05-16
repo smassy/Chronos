@@ -53,7 +53,6 @@ class AppointmentsTable extends Table
         $this->addBehavior('Calendar.Calendar', [
             'field' => 'start_time',
             'enfField' => 'end_time',
-            'scope' => ['invisible' => false]
         ]);
     }
 

@@ -193,9 +193,15 @@ class AppointmentsController extends AppController
     }
 
     public function month($year = null, $month = null) {
+        $uid = $this->request->getQuery('uid');
+        if (!$uid) {
+            $uid = $this->Auth->user('id');
+        }
         $this->Calendar->init($year, $month);
-        $appointments = $this->Appointments->find('calendar', ['year' => $this->Calendar->year(), 'month' => $this->Calendar->month()]);
-        $this->set(compact('appointments'));
+        $appointments = $this->Appointments->find('calendar', ['year' => $this->Calendar->year(), 'month' => $this->Calendar->month()])->where(['user_id' => $uid]);
+        $this->loadModel('UserDetails');
+        $firstParty = $this->UserDetails->find()->where(['user_id' => $uid])->first();
+        $this->set(compact('appointments', 'firstParty'));
     }
 
     public function day($uid, $year = null, $month = null, $day = null) {
