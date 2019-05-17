@@ -64,7 +64,9 @@ class AppointmentsController extends AppController
         } else {
             $appointment['type'] = 'ext';
     }
+        $canConfirm = $this->canManage($id, true);
         $this->set('appointment', $appointment);
+        $this->set('canConfirm', $canConfirm);
     }
 
     /**
@@ -155,7 +157,6 @@ class AppointmentsController extends AppController
             $appointment->start_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData('start_time'));
             $appointment->end_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData('end_time'));
             if ($appointment['int_appointments']) {
-                $this->log('cnf ' . $appointment['int_appointments'][0]['confirmed'], 'debug');
                 $appointment['int_appointments'][0]['confirmed'] = 0;
                 $this->log('cnf ' . $appointment['int_appointments'][0]['confirmed'], 'debug');
 
@@ -239,6 +240,11 @@ class AppointmentsController extends AppController
 
 
     public function confirm($id) {
+        $canConfirm = $this->canManage($id, true);
+        if (!in_array($this->Auth->user('id'), $canConfirm)) {
+            $this->Flash->error('You lack permission to do this.');
+            return $this->redirect(HOME);
+        }
         $appointment = $this->Appointments->get($id, ['contain' => ['IntAppointments']]);
         if ($appointment['int_appointments']) {
             $appointment['int_appointments'][0]['confirmed'] = 1;
@@ -273,11 +279,12 @@ class AppointmentsController extends AppController
      * Get a list of id of those who can act on a given appointment.
      */
     private function canManage($appointment_id, $confirmOnly = false) {
-        $appointment = $this->Appointments->get($appointment_id);
+        $appointment = $this->Appointments->get($appointment_id, ['contain' => ['IntAppointments']]);
         $this->loadModel('SecretarialRelationships');
         $allowedUsers = [];
         if ($appointment['int_appointments']) {
             $allowedUsers[] = $appointment['int_appointments'][0]['user_id'];
+$this->log('came here', 'debug');
             $secretaries = $this->SecretarialRelationships->find()->select(['secretary_id'])->where(['user_id' => $appointment['int_appointments'][0]['user_id']])->toArray();
             foreach ($secretaries as $secretary) {
                 $allowedUsers[] = $secretary->secretary_id;

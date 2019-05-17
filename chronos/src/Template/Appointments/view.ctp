@@ -8,12 +8,12 @@ $session = $this->getRequest()->getSession();
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
+        <li class="heading"><?= __('Actions') ?></li>
 <?php
-if ($appointment['type'] === 'int' && $appointment['int_appointments'][0]['confirmed'] === 0 && in_array($session->read('Auth.User.id, $confirmUsers)) {
-    echo "<li>" . $this->Html->link('Confirm Appointment', ['action' => 'confirm', $appointment->id]) . '</li>';
+if ($appointment['type'] === 'int' && !$appointment['int_appointments'][0]['confirmed']&& in_array($session->read('Auth.User.id'), $canConfirm)) {
+    echo '<li>' . $this->Html->link('Confirm Appointment', ['action' => 'confirm', $appointment->id]) . '</li>';
 }
 ?>
-        <li class="heading"><?= __('Actions') ?></li>
 <?php if ($day > new \DateTime()): ?>
         <li><?= $this->Html->link(__('Edit Appointment'), ['action' => 'edit', $appointment->id]) ?> </li>
         <li><?= $this->Form->postLink(__('Delete Appointment'), ['action' => 'delete', $appointment->id], ['confirm' => __('Are you sure you want to delete # {0}?', $appointment->id)]) ?> </li>
