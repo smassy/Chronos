@@ -13,13 +13,7 @@
                 ['confirm' => __('Are you sure you want to delete # {0}?', $appointment->id)]
             )
         ?></li>
-        <li><?= $this->Html->link(__('List Appointments'), ['action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('List Users'), ['controller' => 'Users', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New User'), ['controller' => 'Users', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Ext Appointments'), ['controller' => 'ExtAppointments', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Ext Appointment'), ['controller' => 'ExtAppointments', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Int Appointments'), ['controller' => 'IntAppointments', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Int Appointment'), ['controller' => 'IntAppointments', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link('Back To Day', ['action' => 'day', $appointment->user_id, $day->format('Y'), $day->format('m'), $day->format('d')]) ?> </li>
     </ul>
 </nav>
 <?= $this->element("scheduler") ?>

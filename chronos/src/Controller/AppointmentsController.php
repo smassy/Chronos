@@ -64,7 +64,9 @@ class AppointmentsController extends AppController
         } else {
             $appointment['type'] = 'ext';
     }
+        $canConfirm = $this->canManage($id, true);
         $this->set('appointment', $appointment);
+        $this->set('canConfirm', $canConfirm);
     }
 
     /**
@@ -74,6 +76,16 @@ class AppointmentsController extends AppController
      */
     public function add($uid = null, $year = null, $month = null, $day = null)
     {
+        $allowedIds = [$uid];
+        $this->loadModel('SecretarialRelationships');
+        $secretaries = $this->SecretarialRelationships->find()->where(['user_id' => $uid]);
+        foreach ($secretaries as $secretary) {
+            $allowedIds[] = $secretary->secretary_id;
+        }
+        if (!in_array($this->Auth->user('id'), $allowedIds)) {
+            $this->Flash->error('You do not have permission to do this.');
+            return $this->redirect(HOME);
+        } 
         if (($year && $month && $day)) {
             $day = new \DateTime($year . '-' . $month . '-' . $day);
             $today = new \DateTime();
@@ -128,6 +140,10 @@ class AppointmentsController extends AppController
      */
     public function edit($id = null)
     {
+        if (!in_array($this->Auth->user('id'), $this->canManage($id))) {
+            $this->Flash->error('You are not allowed to do this.');
+            return $this->redirect(HOME);
+        }
         $appointment = $this->Appointments->get($id, [
             'contain' => ['IntAppointments' => ['Users' => ['UserDetails']], 'ExtAppointments']
         ]);
@@ -141,7 +157,6 @@ class AppointmentsController extends AppController
             $appointment->start_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData('start_time'));
             $appointment->end_time = new \DateTime($day->format('Y-m-d') . ' ' . $this->request->getData('end_time'));
             if ($appointment['int_appointments']) {
-                $this->log('cnf ' . $appointment['int_appointments'][0]['confirmed'], 'debug');
                 $appointment['int_appointments'][0]['confirmed'] = 0;
                 $this->log('cnf ' . $appointment['int_appointments'][0]['confirmed'], 'debug');
 
@@ -174,6 +189,10 @@ class AppointmentsController extends AppController
      */
     public function delete($id = null)
     {
+        if (!in_array($this->Auth->user('id'), canManage($id))) {
+            $this->Flash->error('You are not allowed to do this.');
+            return $this->redirect(HOME);
+        }
         $this->request->allowMethod(['post', 'delete']);
         $appointment = $this->Appointments->get($id, ['contain' => ['IntAppointments', 'ExtAppointments']]);
         if ($appointment['int_appointments']) {
@@ -198,7 +217,10 @@ class AppointmentsController extends AppController
             $uid = $this->Auth->user('id');
         }
         $this->Calendar->init($year, $month);
-        $appointments = $this->Appointments->find('calendar', ['year' => $this->Calendar->year(), 'month' => $this->Calendar->month()])->where(['user_id' => $uid]);
+        $appointments = $this->Appointments->find('calendar', ['year' => $this->Calendar->year(), 'month' => $this->Calendar->month()])
+            ->innerJoinWith('IntAppointments', function ($q) use ($uid) {
+                return $q->where(['OR' => ['Appointments.user_id' => $uid, 'IntAppointments.user_id' => $uid]]);
+            });
         $this->loadModel('UserDetails');
         $firstParty = $this->UserDetails->find()->where(['user_id' => $uid])->first();
         $this->set(compact('appointments', 'firstParty'));
@@ -218,6 +240,11 @@ class AppointmentsController extends AppController
 
 
     public function confirm($id) {
+        $canConfirm = $this->canManage($id, true);
+        if (!in_array($this->Auth->user('id'), $canConfirm)) {
+            $this->Flash->error('You lack permission to do this.');
+            return $this->redirect(HOME);
+        }
         $appointment = $this->Appointments->get($id, ['contain' => ['IntAppointments']]);
         if ($appointment['int_appointments']) {
             $appointment['int_appointments'][0]['confirmed'] = 1;
@@ -246,6 +273,31 @@ class AppointmentsController extends AppController
             $this->RequestHandler->renderAs($this, 'json');
         }
             return;
+    }
+
+    /**
+     * Get a list of id of those who can act on a given appointment.
+     */
+    private function canManage($appointment_id, $confirmOnly = false) {
+        $appointment = $this->Appointments->get($appointment_id, ['contain' => ['IntAppointments']]);
+        $this->loadModel('SecretarialRelationships');
+        $allowedUsers = [];
+        if ($appointment['int_appointments']) {
+            $allowedUsers[] = $appointment['int_appointments'][0]['user_id'];
+$this->log('came here', 'debug');
+            $secretaries = $this->SecretarialRelationships->find()->select(['secretary_id'])->where(['user_id' => $appointment['int_appointments'][0]['user_id']])->toArray();
+            foreach ($secretaries as $secretary) {
+                $allowedUsers[] = $secretary->secretary_id;
+            }
+        }
+        if (!$confirmOnly) {
+            $allowedUsers[] = $appointment->user_id;
+            $secretaries = $this->SecretarialRelationships->find()->select(['secretary_id'])->where(['user_id' => $appointment->user_id])->toArray();
+            foreach ($secretaries as $secretary) {
+                $allowedUsers[] = $secretary->secretary_id;
+            }
+        }
+        return $allowedUsers;
     }
 
 
